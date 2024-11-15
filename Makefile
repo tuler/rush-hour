@@ -4,6 +4,9 @@ CXX = g++
 # Compiler flags
 CXXFLAGS = -Wall -Wextra -std=c++17 -g
 
+SRC_DIR = src
+BUILD_DIR = build
+
 # Linker flags (add libraries here)
 LDFLAGS = -lriv
 
@@ -11,28 +14,33 @@ LDFLAGS = -lriv
 LIBPATHS = -L/usr/local/lib -L./libs
 
 # Source files
-SOURCES = board.cpp piece.cpp main.cpp
+SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 
 # Object files
-OBJECTS = $(SOURCES:.cpp=.o)
+OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 
 # Executable name
 EXECUTABLE = rush
 
 # Default target
-all: $(EXECUTABLE)
+all: $(BUILD_DIR) $(EXECUTABLE)
+
+# Create build directory
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
 
 # Rule to create the executable
 $(EXECUTABLE): $(OBJECTS)
-	$(CXX) $(OBJECTS) $(LIBPATHS) $(LDFLAGS) -o $(EXECUTABLE)
+	$(CXX) $(OBJECTS) $(LIBPATHS) $(LDFLAGS) -o $@
 
 # Rule to create object files
-%.o: %.cpp
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Clean up
 clean:
-	rm -f $(OBJECTS) $(EXECUTABLE)
+	rm -rf $(BUILD_DIR)
+	rm -f $(EXECUTABLE)
 
 # Phony targets
 .PHONY: all clean
