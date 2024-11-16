@@ -42,6 +42,29 @@ Board::Board(std::string desc)
     }
 }
 
+int Board::PieceAt(int64_t position) const
+{
+    for (size_t i = 0; i < pieces.size(); i++)
+    {
+        const Piece &piece = pieces[i];
+        int64_t p = piece.Position();
+        for (int64_t j = 0; j < piece.Size(); j++)
+        {
+            if (p == position)
+            {
+                return i;
+            }
+            p += piece.Stride();
+        }
+    }
+    return -1;
+}
+
+bool Board::IsOccupied(int64_t position) const
+{
+    return PieceAt(position) >= 0;
+}
+
 void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h) const
 {
     int64_t cell_width = w / RUSH_GRID_SIZE;

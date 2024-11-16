@@ -17,17 +17,17 @@ public:
         return label;
     }
 
-    int Position() const
+    int64_t Position() const
     {
         return position;
     }
 
-    int Size() const
+    int64_t Size() const
     {
         return size;
     }
 
-    int Stride() const
+    int64_t Stride() const
     {
         return stride;
     }
