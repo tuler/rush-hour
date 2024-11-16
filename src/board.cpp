@@ -9,7 +9,7 @@ Board::Board(std::string desc)
 {
     // build a list of positions for each label
     std::map<char, std::vector<int>> positions;
-    for (int i = 0; i < desc.length(); i++)
+    for (size_t i = 0; i < desc.length(); i++)
     {
         const char label = desc[i];
         if (label == '.' || label == 'o')
@@ -37,7 +37,8 @@ Board::Board(std::string desc)
         const auto &ps = positions[label];
         // XXX: validate positions
         const int stride = ps[1] - ps[0];
-        pieces.push_back(Piece(ps[0], ps.size(), stride));
+        pieces.push_back(Piece(label, ps[0], ps.size(), stride));
+        riv_printf("piece %c position %02d size %d stride %d\n", label, ps[0], ps.size(), stride);
     }
 }
 
