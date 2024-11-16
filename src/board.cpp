@@ -5,7 +5,7 @@
 #include "board.h"
 #include "config.h"
 
-Board::Board(std::string desc)
+Board::Board(std::string desc, int moves) : moves(moves)
 {
     // build a list of positions for each label
     std::map<char, std::vector<int>> positions;

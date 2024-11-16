@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <map>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -10,24 +11,10 @@ extern "C"
 
 #include "board.h"
 #include "config.h"
+#include "file.h"
 #include "piece.h"
 
-// array of levels, by increasing difficulty
-std::string levels[] = {
-    "oBBBCCooFoDDooFAAHooFooHooGEEEooGooo", // 05 moves
-    "BBCCLoDDoJLoGAAJooGoIEEEHoIKooHFFKoo", // 10 moves
-    "FBBCCJFooHIJAAoHIJGDDDxoGooooooooooo", // 10 moves
-    "oooooxxoDDJLAAHIJLGoHIEEGooIKoGoFFKo", // 10 moves
-    "ooBBBJooooIJAAooIJoCCCDDoEEFFFoGGGHH", // 10 moves
-    "EGBBBoEGoooJEGAAIJFCCHIJFooHDDoooooo", // 15 moves
-    "BBCCCLDDDoKLAAooKLJoEEFFJoGGGoJoHHII", // 15 moves
-    "HBBCCCHDDDKLoIAAKLoIoJEEoooJoMoFFGGM", // 15 moves
-    "oBBCCCDDDooKAAoooKEEFFoKoJGGHHoJooII", // 15 moves
-    "BBBCCMooooLMAAoKLMIJoKDDIJEEFFooGGHH", // 15 moves
-    "BBCCCKoDDDoKoAAJoKooIJEEooIFFFooGGHH", // 15 moves
-};
-
-int main()
+int main(const int argc, const char **argv)
 {
     riv->width = SCREEN_WIDTH;
     riv->height = SCREEN_HEIGHT;
@@ -44,7 +31,14 @@ int main()
     riv->palette[RUSH_COLOR_LABEL] = 0x222222;
     riv->palette[RUSH_COLOR_WALL] = 0x222222;
 
-    const Board board = Board(levels[0]);
+    // load levels from file
+    if (argc < 2)
+    {
+        throw std::runtime_error("missing levels file");
+    }
+    File levels(argv[1]);
+
+    const Board board = Board(levels[0].desc, levels[0].moves);
 
     do
     {

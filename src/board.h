@@ -10,7 +10,7 @@ extern "C"
 class Board
 {
 public:
-    explicit Board(std::string desc);
+    explicit Board(std::string desc, int moves);
 
     int PieceAt(int64_t position) const;
 
@@ -21,5 +21,9 @@ public:
     bool Solved() const;
 
 private:
+    // minimal number of moves to solve the board
+    int moves;
+
+    // list of pieces on the board (first is the primary)
     std::vector<Piece> pieces;
 };
