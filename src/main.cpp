@@ -14,6 +14,56 @@ extern "C"
 #include "file.h"
 #include "piece.h"
 
+int play(Board &board)
+{
+    do
+    {
+        if (riv->keys[RIV_GAMEPAD_A1].press ||
+            riv->keys[RIV_GAMEPAD_A2].press ||
+            riv->keys[RIV_GAMEPAD_L1].press ||
+            riv->keys[RIV_GAMEPAD_L2].press ||
+            riv->keys[RIV_GAMEPAD_L3].press ||
+            riv->keys[RIV_GAMEPAD_SELECT].press)
+        {
+            board.SelectPrevious();
+        }
+        if (riv->keys[RIV_GAMEPAD_A3].press ||
+            riv->keys[RIV_GAMEPAD_A4].press ||
+            riv->keys[RIV_GAMEPAD_R1].press ||
+            riv->keys[RIV_GAMEPAD_R2].press ||
+            riv->keys[RIV_GAMEPAD_R3].press ||
+            riv->keys[RIV_GAMEPAD_START].press)
+        {
+            board.SelectNext();
+        }
+        if (riv->keys[RIV_GAMEPAD_UP].press ||
+            riv->keys[RIV_GAMEPAD_LEFT].press)
+        {
+            board.MoveSelectedBackward();
+        }
+        if (riv->keys[RIV_GAMEPAD_DOWN].press ||
+            riv->keys[RIV_GAMEPAD_RIGHT].press)
+        {
+            board.MoveSelectedForward();
+        }
+
+        // clear screen
+        riv_clear(RUSH_COLOR_BACKGROUND);
+
+        // draw board
+        board.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32);
+
+        if (board.Solved())
+        {
+            return 0;
+        }
+        // only exit when solved
+        // TODO: timeout = gameover
+
+    } while (riv_present());
+    return -1;
+}
+
 int main(const int argc, const char **argv)
 {
     riv->width = SCREEN_WIDTH;
@@ -38,15 +88,12 @@ int main(const int argc, const char **argv)
     }
     File levels(argv[1]);
 
-    const Board board = Board(levels[0].desc, levels[0].moves);
-
+    int l = 0; // level
+    int result = 0;
     do
     {
-        // clear screen
-        riv_clear(RUSH_COLOR_BACKGROUND);
-
-        // draw board
-        board.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32);
-
-    } while (riv_present());
+        Board board = Board(levels[l].desc, levels[l].moves);
+        result = play(board);
+        l++;
+    } while (result >= 0);
 }

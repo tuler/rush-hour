@@ -5,7 +5,7 @@
 #include "board.h"
 #include "config.h"
 
-Board::Board(std::string desc, int moves) : moves(moves)
+Board::Board(std::string desc, int moves) : moves(moves), selected(0)
 {
     // build a list of positions for each label
     std::map<char, std::vector<int>> positions;
@@ -65,6 +65,40 @@ bool Board::IsOccupied(int64_t position) const
     return PieceAt(position) >= 0;
 }
 
+bool Board::SelectNext()
+{
+    selected = (selected + 1) % pieces.size();
+    return true;
+}
+
+bool Board::SelectPrevious()
+{
+    selected = (selected - 1 + pieces.size()) % pieces.size();
+    return true;
+}
+
+bool Board::MoveSelectedBackward()
+{
+    if (selected < 0)
+    {
+        return false;
+    }
+    Piece &piece = pieces[selected];
+    piece.Move(-1);
+    return true;
+}
+
+bool Board::MoveSelectedForward()
+{
+    if (selected < 0)
+    {
+        return false;
+    }
+    Piece &piece = pieces[selected];
+    piece.Move(1);
+    return true;
+}
+
 void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h) const
 {
     int64_t cell_width = w / RUSH_GRID_SIZE;
@@ -88,9 +122,9 @@ void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h) const
     riv_draw_triangle_fill(xExit, yExit - 5, xExit + 5, yExit, xExit, yExit + 5, RUSH_COLOR_GRID_LINE);
 
     // draw pieces
-    for (const Piece &piece : pieces)
+    for (size_t i = 0; i < pieces.size(); i++)
     {
-        piece.Draw(x0, y0, w, h);
+        pieces[i].Draw(x0, y0, w, h, i == selected);
     }
 }
 

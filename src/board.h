@@ -16,6 +16,14 @@ public:
 
     bool IsOccupied(int64_t position) const;
 
+    bool SelectNext();
+
+    bool SelectPrevious();
+
+    bool MoveSelectedBackward();
+
+    bool MoveSelectedForward();
+
     void Draw(int64_t x0, int64_t y0, int64_t w, int64_t h) const;
 
     bool Solved() const;
@@ -26,4 +34,7 @@ private:
 
     // list of pieces on the board (first is the primary)
     std::vector<Piece> pieces;
+
+    // selected piece
+    uint64_t selected;
 };
