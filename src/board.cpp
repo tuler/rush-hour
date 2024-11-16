@@ -69,17 +69,20 @@ void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h) const
     {
         piece.Draw(x0, y0, w, h);
     }
-
-    // TODO: draw primary piece
-
-    // draw primary piece
-    // riv_draw_rect_fill(x0 + 3, y0 + 3, cell_width - 5, cell_height - 5, RUSH_COLOR_PRIMARY_PIECE);
-
-    // draw pieces
-    // riv_draw_rect_fill(x0 + 3, y0 + cell_height + 3, cell_width - 5, cell_height + cell_height - 5, RUSH_COLOR_PIECE);
 }
 
 bool Board::Solved() const
 {
+    if (pieces.size() > 0)
+    {
+        // primary piece is always the first in the list
+        Piece primaryPiece = pieces[0];
+
+        // calculate exit position
+        int exitPosition = (RUSH_GRID_SIZE * RUSH_GRID_SIZE / 2 - 2);
+
+        // check primary piece position
+        return primaryPiece.Position() == exitPosition;
+    }
     return false;
 }
