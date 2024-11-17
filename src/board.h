@@ -22,6 +22,8 @@ public:
 
     bool CanMove(uint64_t index) const;
 
+    const Piece &PrimaryPiece() const;
+
     bool SelectNext();
 
     bool SelectPrevious();
@@ -30,7 +32,7 @@ public:
 
     bool MoveSelectedForward();
 
-    void Draw(int64_t x0, int64_t y0, int64_t w, int64_t h) const;
+    void Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryPiece, bool drawPieces) const;
 
     bool Solved() const;
 

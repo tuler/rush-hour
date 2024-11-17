@@ -51,7 +51,7 @@ int play(Board &board)
         riv_clear(RUSH_COLOR_BACKGROUND);
 
         // draw board
-        board.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32);
+        board.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, true);
 
         if (board.Solved())
         {
@@ -66,17 +66,28 @@ int play(Board &board)
 
 void transition(Board &current, Board &next)
 {
+    const Piece &piece = current.PrimaryPiece();
+    int delta = current.PrimaryPiece().Position() - next.PrimaryPiece().Position();
+
     // draw transition from one board to the next
-    for (uint32_t i = 0; i < riv->width; i++)
+    for (int i = 0; i < (int)riv->width; i += 4)
     {
         // clear screen
         riv_clear(RUSH_COLOR_BACKGROUND);
 
+        bool dp = i < ((int)riv->width - delta * 32); // draw primary piece
+
         // draw board
-        current.Draw(32 - i, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32);
+        current.Draw(32 - i, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, false, true);
 
         // draw next board
-        next.Draw(32 + riv->width - i, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32);
+        next.Draw(32 + riv->width - i, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, !dp, false);
+
+        // draw "fixed" primary piece
+        if (dp)
+        {
+            piece.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true);
+        }
 
         // present
         riv_present();

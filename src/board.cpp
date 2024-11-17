@@ -63,6 +63,11 @@ int Board::PieceAt(uint64_t position) const
     return -1;
 }
 
+const Piece &Board::PrimaryPiece() const
+{
+    return pieces[0];
+}
+
 bool Board::IsOccupied(uint64_t position) const
 {
     return PieceAt(position) >= 0;
@@ -129,7 +134,7 @@ bool Board::MoveSelectedForward()
     return true;
 }
 
-void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h) const
+void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryPiece, bool drawPieces) const
 {
     int64_t cell_width = w / RUSH_GRID_SIZE;
     int64_t cell_height = h / RUSH_GRID_SIZE;
@@ -152,9 +157,16 @@ void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h) const
     riv_draw_triangle_fill(xExit, yExit - 5, xExit + 5, yExit, xExit, yExit + 5, RUSH_COLOR_GRID_LINE);
 
     // draw pieces
-    for (size_t i = 0; i < pieces.size(); i++)
+    if (drawPrimaryPiece)
     {
-        pieces[i].Draw(x0, y0, w, h, i == selected);
+        pieces[0].Draw(x0, y0, w, h, 0 == selected);
+    }
+    if (drawPieces)
+    {
+        for (size_t i = 1; i < pieces.size(); i++)
+        {
+            pieces[i].Draw(x0, y0, w, h, i == selected);
+        }
     }
 }
 
