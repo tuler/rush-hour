@@ -64,6 +64,25 @@ int play(Board &board)
     return -1;
 }
 
+void transition(Board &current, Board &next)
+{
+    // draw transition from one board to the next
+    for (uint32_t i = 0; i < riv->width; i++)
+    {
+        // clear screen
+        riv_clear(RUSH_COLOR_BACKGROUND);
+
+        // draw board
+        current.Draw(32 - i, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32);
+
+        // draw next board
+        next.Draw(32 + riv->width - i, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32);
+
+        // present
+        riv_present();
+    }
+}
+
 int main(const int argc, const char **argv)
 {
     riv->width = SCREEN_WIDTH;
@@ -88,12 +107,21 @@ int main(const int argc, const char **argv)
     }
     File levels(argv[1]);
 
-    int l = 0; // level
+    uint64_t l = 0; // level
     int result = 0;
+    Board board = Board(levels[l].desc, levels[l].moves);
     do
     {
-        Board board = Board(levels[l].desc, levels[l].moves);
         result = play(board);
+        if (l + 1 >= levels.size())
+        {
+            // gone through all levels
+            break;
+        }
+
+        Board next = Board(levels[l + 1].desc, levels[l + 1].moves);
+        transition(board, next);
+        board = next;
         l++;
     } while (result >= 0);
 }
