@@ -40,15 +40,18 @@ Board::Board(std::string desc, int moves) : moves(moves), selected(0)
         pieces.push_back(Piece(label, ps[0], ps.size(), stride));
         riv_printf("piece %c position %02d size %d stride %d\n", label, ps[0], ps.size(), stride);
     }
+
+    // select moveable piece
+    SelectNext();
 }
 
-int Board::PieceAt(int64_t position) const
+int Board::PieceAt(uint64_t position) const
 {
     for (size_t i = 0; i < pieces.size(); i++)
     {
         const Piece &piece = pieces[i];
-        int64_t p = piece.Position();
-        for (int64_t j = 0; j < piece.Size(); j++)
+        uint64_t p = piece.Position();
+        for (uint64_t j = 0; j < piece.Size(); j++)
         {
             if (p == position)
             {
@@ -60,26 +63,53 @@ int Board::PieceAt(int64_t position) const
     return -1;
 }
 
-bool Board::IsOccupied(int64_t position) const
+bool Board::IsOccupied(uint64_t position) const
 {
     return PieceAt(position) >= 0;
 }
 
+bool Board::CanMoveForward(uint64_t index) const
+{
+    const Piece &piece = pieces[index];
+    return piece.CanMoveForward() && !IsOccupied(piece.EndPosition() + piece.Stride());
+}
+
+bool Board::CanMoveBackward(uint64_t index) const
+{
+    const Piece &piece = pieces[index];
+    return piece.CanMoveBackward() && !IsOccupied(piece.Position() - piece.Stride());
+}
+
+bool Board::CanMove(uint64_t index) const
+{
+    return CanMoveBackward(index) || CanMoveForward(index);
+}
+
 bool Board::SelectNext()
 {
-    selected = (selected + 1) % pieces.size();
+    uint64_t s = selected;
+    do
+    {
+        s = (s + 1) % pieces.size();
+    } while (s != selected && !CanMove(s));
+    selected = s;
     return true;
 }
 
 bool Board::SelectPrevious()
 {
-    selected = (selected - 1 + pieces.size()) % pieces.size();
+    uint64_t s = selected;
+    do
+    {
+        s = (s - 1 + pieces.size()) % pieces.size();
+    } while (s != selected && !CanMove(s));
+    selected = s;
     return true;
 }
 
 bool Board::MoveSelectedBackward()
 {
-    if (selected < 0)
+    if (!CanMoveBackward(selected))
     {
         return false;
     }
@@ -90,7 +120,7 @@ bool Board::MoveSelectedBackward()
 
 bool Board::MoveSelectedForward()
 {
-    if (selected < 0)
+    if (!CanMoveForward(selected))
     {
         return false;
     }
@@ -136,7 +166,7 @@ bool Board::Solved() const
         Piece primaryPiece = pieces[0];
 
         // calculate exit position
-        int exitPosition = (RUSH_GRID_SIZE * RUSH_GRID_SIZE / 2 - 2);
+        uint64_t exitPosition = (RUSH_GRID_SIZE * RUSH_GRID_SIZE / 2 - 2);
 
         // check primary piece position
         return primaryPiece.Position() == exitPosition;

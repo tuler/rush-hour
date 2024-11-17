@@ -1,11 +1,37 @@
 #include "config.h"
 #include "piece.h"
 
-Piece::Piece(char label, int64_t position, int64_t size, int64_t stride) : label(label),
-                                                                           position(position),
-                                                                           size(size),
-                                                                           stride(stride)
+Piece::Piece(char label, uint64_t position, uint64_t size, uint64_t stride) : label(label),
+                                                                              position(position),
+                                                                              size(size),
+                                                                              stride(stride)
 {
+}
+
+bool Piece::CanMoveBackward() const
+{
+    if (Horizontal())
+    {
+        return position % RUSH_GRID_SIZE > 0;
+    }
+    else if (Vertical())
+    {
+        return position / RUSH_GRID_SIZE > 0;
+    }
+    return false;
+}
+
+bool Piece::CanMoveForward() const
+{
+    if (Horizontal())
+    {
+        return EndPosition() % RUSH_GRID_SIZE < (RUSH_GRID_SIZE - 1);
+    }
+    else if (Vertical())
+    {
+        return EndPosition() / RUSH_GRID_SIZE < (RUSH_GRID_SIZE - 1);
+    }
+    return false;
 }
 
 void Piece::Move(int steps)

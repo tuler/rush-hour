@@ -12,9 +12,15 @@ class Board
 public:
     explicit Board(std::string desc, int moves);
 
-    int PieceAt(int64_t position) const;
+    int PieceAt(uint64_t position) const;
 
-    bool IsOccupied(int64_t position) const;
+    bool IsOccupied(uint64_t position) const;
+
+    bool CanMoveForward(uint64_t index) const;
+
+    bool CanMoveBackward(uint64_t index) const;
+
+    bool CanMove(uint64_t index) const;
 
     bool SelectNext();
 
