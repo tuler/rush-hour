@@ -1,4 +1,4 @@
 set -e
-make clean
+#make clean
 rivemu -quiet -no-window -sdk -workspace -exec make
 rivemu -workspace -exec ./rush data/rush.txt
