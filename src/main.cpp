@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <map>
+#include <cmath>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -68,23 +69,34 @@ void transition(Board &current, Board &next)
 {
     const Piece &piece = current.PrimaryPiece();
     int delta = current.PrimaryPiece().Position() - next.PrimaryPiece().Position();
+    const int STEPS = riv->width / 4;
+
+    // Ease in-out function using sine
+    auto ease = [](float x) -> float
+    {
+        return (1.0f - std::cos(x * M_PI)) / 2.0f;
+    };
 
     // draw transition from one board to the next
-    for (int i = 0; i < (int)riv->width; i += 4)
+    for (int step = 0; step <= STEPS; step++)
     {
         // clear screen
         riv_clear(RUSH_COLOR_BACKGROUND);
 
-        bool dp = i < ((int)riv->width - delta * 32); // draw primary piece
+        // Calculate smooth progress (0.0 to 1.0)
+        float progress = static_cast<float>(step) / STEPS;
+        float smoothProgress = ease(progress);
 
-        // draw board
-        current.Draw(32 - i, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, false, true);
+        // Calculate interpolated offset
+        int offset = static_cast<int>(smoothProgress * riv->width);
+        bool drawPrimary = offset < (riv->width - delta * 32);
 
-        // draw next board
-        next.Draw(32 + riv->width - i, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, !dp, false);
+        // Draw boards with interpolated positions
+        current.Draw(32 - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, false, true);
+        next.Draw(32 + riv->width - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, !drawPrimary, false);
 
-        // draw "fixed" primary piece
-        if (dp)
+        // Draw fixed primary piece
+        if (drawPrimary)
         {
             piece.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true);
         }
