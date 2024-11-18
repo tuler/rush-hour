@@ -8,14 +8,15 @@
 #include "board.h"
 #include "game.h"
 
-Game::Game(File &file, SpriteSheet &ss) : file(file), ss(ss)
+Game::Game(File &file) : file(file)
 {
+    score = 0;
 }
 
 void Game::Start()
 {
     uint64_t l = 0; // level
-    int result = 0;
+    uint64_t result = 0;
     Board board = Board(l, file[l].desc, file[l].moves);
     do
     {
@@ -25,18 +26,49 @@ void Game::Start()
             // gone through all levels
             break;
         }
+        if (result == 0)
+        {
+            // player ran out of time
+            break;
+        }
 
         Board next = Board(l + 1, file[l + 1].desc, file[l + 1].moves);
         Transition(board, next);
         board = next;
+        score += result;
         l++;
-    } while (result >= 0);
+    } while (result > 0);
 }
 
-int Game::Play(Board &board)
+uint64_t Game::Play(Board &board)
 {
+    // how many miliseconds we give the player per move
+    // TODO: maybe make this variable to make it harder as player advances
+    uint64_t ms_per_move = 3000;
+
+    // how much time we give the player to complete the level
+    uint64_t max_time = ms_per_move * board.Moves();
+
+    uint64_t start_time = riv->time_ms;
+    uint64_t timeout = start_time + max_time;
+
     do
     {
+        uint64_t time_ms = riv->time_ms;
+
+        // check if time is over
+        if (time_ms >= timeout)
+        {
+            return 0;
+        }
+
+        // check if board is solved
+        if (board.Solved())
+        {
+            // return how much time is left (will be added to score)
+            return riv->time_ms - start_time;
+        }
+
         if (riv->keys[RIV_GAMEPAD_A1].press ||
             riv->keys[RIV_GAMEPAD_A2].press ||
             riv->keys[RIV_GAMEPAD_L1].press ||
@@ -72,15 +104,24 @@ int Game::Play(Board &board)
         // draw board
         board.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, true);
 
-        if (board.Solved())
-        {
-            return 0;
-        }
-        // only exit when solved
-        // TODO: timeout = gameover
+        // draw timer
+        riv_draw_text(("Time " + std::to_string((timeout - time_ms) / 1000)).c_str(),
+                      RIV_SPRITESHEET_FONT_5X7, RIV_LEFT,
+                      32,
+                      256 - 16,
+                      1,
+                      RIV_COLOR_BLACK);
+
+        // draw score
+        riv_draw_text(("Score " + std::to_string(score)).c_str(),
+                      RIV_SPRITESHEET_FONT_5X7, RIV_RIGHT,
+                      256 - 32,
+                      256 - 16,
+                      1,
+                      RIV_COLOR_BLACK);
 
     } while (riv_present());
-    return -1;
+    return 0;
 }
 
 void Game::Transition(Board &current, Board &next)
@@ -122,4 +163,9 @@ void Game::Transition(Board &current, Board &next)
         // present
         riv_present();
     }
+}
+
+uint64_t Game::Score() const
+{
+    return score;
 }

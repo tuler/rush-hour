@@ -5,9 +5,9 @@
 #include "board.h"
 #include "config.h"
 
-Board::Board(uint64_t index, std::string desc, int moves) : index(index),
-                                                            moves(moves),
-                                                            selected(0)
+Board::Board(uint64_t index, std::string desc, uint64_t moves) : index(index),
+                                                                 moves(moves),
+                                                                 selected(0)
 {
     // build a list of positions for each label
     std::map<char, std::vector<int>> positions;

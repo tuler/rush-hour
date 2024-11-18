@@ -2,21 +2,27 @@
 
 #include "board.h"
 #include "file.h"
-#include "spritesheet.h"
+
+extern "C"
+{
+#include "riv.h"
+}
 
 class Game
 {
 public:
-    Game(File &file, SpriteSheet &ss);
+    Game(File &file);
 
     void Start();
 
+    uint64_t Score() const;
+
 private:
+    uint64_t score;
+
     File &file;
 
-    SpriteSheet &ss;
-
-    int Play(Board &board);
+    uint64_t Play(Board &board);
 
     void Transition(Board &current, Board &next);
 };

@@ -5,7 +5,7 @@
 
 typedef struct
 {
-    int moves;
+    uint64_t moves;
     std::string desc;
     int cluster;
 } FileEntry;

@@ -10,7 +10,6 @@ extern "C"
 #include "file.h"
 #include "game.h"
 #include "piece.h"
-#include "spritesheet.h"
 
 int main(const int argc, const char **argv)
 {
@@ -29,15 +28,12 @@ int main(const int argc, const char **argv)
     riv->palette[RUSH_COLOR_LABEL] = 0x222222;
     riv->palette[RUSH_COLOR_WALL] = 0x222222;
 
-    // load spritesheet
-    SpriteSheet ss = SpriteSheet("img/spritesheet.png", "img/spritesheet.txt");
-
     // load levels from file
     if (argc < 2)
     {
         throw std::runtime_error("missing levels file");
     }
     File levels(argv[1]);
-    Game game = Game(levels, ss);
+    Game game = Game(levels);
     game.Start();
 }
