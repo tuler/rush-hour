@@ -34,7 +34,7 @@ void Game::Start()
         }
 
         Board next = Board(l + 1, file[l + 1].desc, file[l + 1].moves);
-        Transition(board, next);
+        Transition(board, next, score, score + result);
         board = next;
         score += result;
         l++;
@@ -127,7 +127,7 @@ uint64_t Game::Play(Board &board)
     return 0;
 }
 
-void Game::Transition(Board &current, Board &next)
+void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t new_score)
 {
     const Piece &piece = current.PrimaryPiece();
     int delta = current.PrimaryPiece().Position() - next.PrimaryPiece().Position();
@@ -163,6 +163,14 @@ void Game::Transition(Board &current, Board &next)
             piece.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true);
         }
 
+        // draw score
+        uint64_t sc = old_score + (new_score - old_score) * smoothProgress;
+        riv_recti text_size = riv_draw_text(("Score " + std::to_string(sc)).c_str(),
+                                            RIV_SPRITESHEET_FONT_5X7, RIV_RIGHT,
+                                            256 - 32,
+                                            256 - 16,
+                                            1,
+                                            RIV_COLOR_BLACK);
         // present
         riv_present();
     }

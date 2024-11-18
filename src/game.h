@@ -24,5 +24,5 @@ private:
 
     uint64_t Play(Board &board);
 
-    void Transition(Board &current, Board &next);
+    void Transition(Board &current, Board &next, uint64_t old_score, uint64_t new_score);
 };
