@@ -7,6 +7,7 @@
 
 #include "board.h"
 #include "game.h"
+#include "health.h"
 
 Game::Game(File &file) : file(file)
 {
@@ -52,6 +53,9 @@ uint64_t Game::Play(Board &board)
     uint64_t start_time = riv->time_ms;
     uint64_t timeout = start_time + max_time;
 
+    // health meter
+    Health health = Health(RUSH_COLOR_GRID_LINE, RUSH_COLOR_PIECE);
+
     do
     {
         uint64_t time_ms = riv->time_ms;
@@ -61,12 +65,13 @@ uint64_t Game::Play(Board &board)
         {
             return 0;
         }
+        uint64_t time_left = timeout - time_ms;
 
         // check if board is solved
         if (board.Solved())
         {
             // return how much time is left (will be added to score)
-            return riv->time_ms - start_time;
+            return time_left;
         }
 
         if (riv->keys[RIV_GAMEPAD_A1].press ||
@@ -104,21 +109,19 @@ uint64_t Game::Play(Board &board)
         // draw board
         board.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, true);
 
-        // draw timer
-        riv_draw_text(("Time " + std::to_string((timeout - time_ms) / 1000)).c_str(),
-                      RIV_SPRITESHEET_FONT_5X7, RIV_LEFT,
-                      32,
-                      256 - 16,
-                      1,
-                      RIV_COLOR_BLACK);
-
         // draw score
-        riv_draw_text(("Score " + std::to_string(score)).c_str(),
-                      RIV_SPRITESHEET_FONT_5X7, RIV_RIGHT,
-                      256 - 32,
-                      256 - 16,
-                      1,
-                      RIV_COLOR_BLACK);
+        riv_recti text_size = riv_draw_text(("Score " + std::to_string(score)).c_str(),
+                                            RIV_SPRITESHEET_FONT_5X7, RIV_RIGHT,
+                                            256 - 32,
+                                            256 - 16,
+                                            1,
+                                            RIV_COLOR_BLACK);
+        // draw timer
+        health.Draw(32,
+                    256 - 16 - (text_size.height / 2),
+                    256 - 64 - text_size.width - 2,
+                    text_size.height,
+                    (float)time_left / max_time);
 
     } while (riv_present());
     return 0;
