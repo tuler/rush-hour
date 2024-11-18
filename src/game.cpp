@@ -8,7 +8,7 @@
 #include "board.h"
 #include "game.h"
 
-Game::Game(File &file) : file(file)
+Game::Game(File &file, SpriteSheet &ss) : file(file), ss(ss)
 {
 }
 
