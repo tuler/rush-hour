@@ -42,7 +42,7 @@ Board::Board(std::string desc, int moves) : moves(moves), selected(0)
     }
 
     // select moveable piece
-    SelectNext();
+    // SelectNext();
 }
 
 int Board::PieceAt(uint64_t position) const
