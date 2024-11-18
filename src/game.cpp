@@ -16,7 +16,7 @@ void Game::Start()
 {
     uint64_t l = 0; // level
     int result = 0;
-    Board board = Board(file[l].desc, file[l].moves);
+    Board board = Board(l, file[l].desc, file[l].moves);
     do
     {
         result = Play(board);
@@ -26,7 +26,7 @@ void Game::Start()
             break;
         }
 
-        Board next = Board(file[l + 1].desc, file[l + 1].moves);
+        Board next = Board(l + 1, file[l + 1].desc, file[l + 1].moves);
         Transition(board, next);
         board = next;
         l++;

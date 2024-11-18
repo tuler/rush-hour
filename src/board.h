@@ -10,7 +10,7 @@ extern "C"
 class Board
 {
 public:
-    explicit Board(std::string desc, int moves);
+    explicit Board(uint64_t index, std::string desc, int moves);
 
     int PieceAt(uint64_t position) const;
 
@@ -37,6 +37,9 @@ public:
     bool Solved() const;
 
 private:
+    // board level
+    uint64_t index;
+
     // minimal number of moves to solve the board
     int moves;
 

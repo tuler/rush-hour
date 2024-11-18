@@ -5,7 +5,9 @@
 #include "board.h"
 #include "config.h"
 
-Board::Board(std::string desc, int moves) : moves(moves), selected(0)
+Board::Board(uint64_t index, std::string desc, int moves) : index(index),
+                                                            moves(moves),
+                                                            selected(0)
 {
     // build a list of positions for each label
     std::map<char, std::vector<int>> positions;
@@ -168,6 +170,10 @@ void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryP
             pieces[i].Draw(x0, y0, w, h, i == selected);
         }
     }
+
+    // draw title
+    std::string title = "Level " + std::to_string(index + 1);
+    riv_draw_text(title.c_str(), RIV_SPRITESHEET_FONT_5X7, RIV_CENTER, x0 + w / 2, y0 - 16, 1, RIV_COLOR_BLACK);
 }
 
 bool Board::Solved() const
