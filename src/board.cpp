@@ -144,21 +144,21 @@ void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryP
     riv_draw_rect_fill(x0 - 2, y0 - 2, w + 2, h + 2, RUSH_COLOR_BOARD);
 
     // draw border
-    riv_draw_rect_line(x0 - 2, y0 - 2, w + 2, h + 2, RUSH_COLOR_GRID_LINE);
+    riv_draw_rect_line(x0 - 3, y0 - 3, w + 4, h + 4, RUSH_COLOR_GRID_LINE);
 
     // draw exit
-    uint64_t xExit = x0 + w - 1;
+    uint64_t xExit = x0 + w;
     uint64_t yExit0 = y0 + (cell_height * 2) - 2;
     uint64_t yExit1 = y0 + (cell_height * 3) - 1;
-    riv_draw_line(xExit, yExit0, xExit, yExit1, RUSH_COLOR_BOARD);
+    riv_draw_line(xExit, yExit0, xExit, yExit1, RUSH_COLOR_BACKGROUND);
     riv_draw_line(xExit, yExit0, xExit + 4, yExit0, RUSH_COLOR_GRID_LINE);
     riv_draw_line(xExit, yExit1, xExit + 4, yExit1, RUSH_COLOR_GRID_LINE);
 
     // draw entry
     if (drawEntry)
     {
-        uint64_t xEntry = x0 - 2;
-        riv_draw_line(xEntry, yExit0, xEntry, yExit1, RUSH_COLOR_BOARD);
+        uint64_t xEntry = x0 - 3;
+        riv_draw_line(xEntry, yExit0, xEntry, yExit1, RUSH_COLOR_BACKGROUND);
         // riv_draw_line(xEntry, yExit0, xEntry - 4, yExit0, RUSH_COLOR_GRID_LINE);
         // riv_draw_line(xEntry, yExit1, xEntry - 4, yExit1, RUSH_COLOR_GRID_LINE);
     }

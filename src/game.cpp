@@ -23,6 +23,7 @@ void Game::Start()
     uint64_t l = 0; // level
     uint64_t result = 0;
     Board board = Board(l, file[l].desc, file[l].moves);
+    InitialTransition(board);
     do
     {
         result = Play(board);
@@ -213,7 +214,7 @@ uint64_t Game::Play(Board &board)
                                             1,
                                             RIV_COLOR_BLACK);
         // draw timer
-        health.Draw(32,
+        health.Draw(32 - 3,
                     256 - 16 - (text_size.height / 2),
                     256 - 64 - text_size.width - 4,
                     text_size.height,
@@ -266,7 +267,7 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
         // Draw fixed primary piece
         if (drawPrimary)
         {
-            piece.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, 1.0);
+            piece.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, RUSH_COLOR_PIECE);
         }
 
         // draw score
@@ -278,7 +279,7 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
                                             1,
                                             RIV_COLOR_BLACK);
         // draw timer
-        health.Draw(32,
+        health.Draw(32 - 3,
                     256 - 16 - (text_size.height / 2),
                     256 - 64 - text_size.width - 4,
                     text_size.height,
@@ -306,12 +307,66 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
                                             RIV_COLOR_BLACK);
         // draw timer
         float p = (float)(color - RUSH_COLOR_TEAL_0) / (RUSH_COLOR_TEAL_5 - RUSH_COLOR_TEAL_0);
-        health.Draw(32,
+        health.Draw(32 - 3,
                     256 - 16 - (text_size.height / 2),
                     256 - 64 - text_size.width - 4,
                     text_size.height,
                     p);
 
+        // present
+        riv_present();
+    }
+}
+
+void Game::InitialTransition(Board &next)
+{
+    const int STEPS = riv->width / 4;
+
+    // Ease in-out function using sine
+    auto ease = [](float x) -> float
+    {
+        return (1.0f - std::cos(x * M_PI)) / 2.0f;
+    };
+
+    // draw transition from one board to the next
+    for (int step = 0; step <= STEPS; step++)
+    {
+        // clear screen
+        riv_clear(RUSH_COLOR_BACKGROUND);
+
+        // Calculate smooth progress (0.0 to 1.0)
+        float progress = static_cast<float>(step) / STEPS;
+        float smoothProgress = ease(progress);
+
+        // Calculate interpolated offset
+        int offset = static_cast<int>(smoothProgress * riv->width);
+
+        // Draw boards with interpolated positions
+        next.Draw(32 + riv->width - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, false, 0, true);
+
+        // Draw fixed primary piece
+        next.PrimaryPiece().Draw(32 - (256 - offset), 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, RUSH_COLOR_PIECE);
+
+        // present
+        riv_present();
+    }
+
+    // draw final state with interpolated alpha for pieces
+    for (int color = RUSH_COLOR_TEAL_0; color <= RUSH_COLOR_TEAL_5; color++)
+    {
+        // clear screen
+        riv_clear(RUSH_COLOR_BACKGROUND);
+
+        // Draw next board
+        next.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, color, false);
+
+        // draw score
+        riv_draw_text(("Score " + std::to_string(0)).c_str(),
+                      RIV_SPRITESHEET_FONT_5X7, RIV_RIGHT,
+                      256 - 32,
+                      256 - 16,
+                      1,
+                      RIV_COLOR_BLACK);
         // present
         riv_present();
     }
