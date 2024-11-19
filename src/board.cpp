@@ -141,32 +141,32 @@ void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryP
     int64_t cell_height = h / RUSH_GRID_SIZE;
 
     // draw background
-    riv_draw_rect_fill(x0, y0, w, h, RUSH_COLOR_BOARD);
+    riv_draw_rect_fill(x0 - 2, y0 - 2, w + 2, h + 2, RUSH_COLOR_BOARD);
 
     // draw border
-    riv_draw_rect_line(x0, y0, RUSH_GRID_SIZE * 32 + 1, RUSH_GRID_SIZE * 32 + 1, RUSH_COLOR_GRID_LINE);
+    riv_draw_rect_line(x0 - 2, y0 - 2, w + 2, h + 2, RUSH_COLOR_GRID_LINE);
 
     // draw exit
-    uint64_t xExit = x0 + w;
-    uint64_t yExit0 = y0 + (cell_height * 2);
-    uint64_t yExit1 = y0 + (cell_height * 3);
-    riv_draw_line(xExit, yExit0, xExit, yExit1, RUSH_COLOR_BACKGROUND);
+    uint64_t xExit = x0 + w - 1;
+    uint64_t yExit0 = y0 + (cell_height * 2) - 2;
+    uint64_t yExit1 = y0 + (cell_height * 3) - 1;
+    riv_draw_line(xExit, yExit0, xExit, yExit1, RUSH_COLOR_BOARD);
     riv_draw_line(xExit, yExit0, xExit + 4, yExit0, RUSH_COLOR_GRID_LINE);
     riv_draw_line(xExit, yExit1, xExit + 4, yExit1, RUSH_COLOR_GRID_LINE);
 
     // draw entry
     if (drawEntry)
     {
-        uint64_t xEntry = x0;
-        riv_draw_line(xEntry, yExit0, xEntry, yExit1, RUSH_COLOR_BACKGROUND);
-        riv_draw_line(xEntry, yExit0, xEntry - 4, yExit0, RUSH_COLOR_GRID_LINE);
-        riv_draw_line(xEntry, yExit1, xEntry - 4, yExit1, RUSH_COLOR_GRID_LINE);
+        uint64_t xEntry = x0 - 2;
+        riv_draw_line(xEntry, yExit0, xEntry, yExit1, RUSH_COLOR_BOARD);
+        // riv_draw_line(xEntry, yExit0, xEntry - 4, yExit0, RUSH_COLOR_GRID_LINE);
+        // riv_draw_line(xEntry, yExit1, xEntry - 4, yExit1, RUSH_COLOR_GRID_LINE);
     }
 
     // draw pieces
     if (drawPrimaryPiece)
     {
-        pieces[0].Draw(x0, y0, w, h, 0 == selected, 1.0);
+        pieces[0].Draw(x0, y0, w, h, 0 == selected, pieceColor);
     }
     if (pieceColor > 0)
     {
