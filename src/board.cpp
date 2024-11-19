@@ -136,7 +136,7 @@ bool Board::MoveSelectedForward()
     return true;
 }
 
-void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryPiece, uint32_t pieceColor, bool drawEntry) const
+void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryPiece, bool drawPieces, uint32_t colorOffset, bool drawEntry) const
 {
     int64_t cell_height = h / RUSH_GRID_SIZE;
 
@@ -144,35 +144,35 @@ void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryP
     riv_draw_rect_fill(x0 - 2, y0 - 2, w + 2, h + 2, RUSH_COLOR_BOARD);
 
     // draw border
-    riv_draw_rect_line(x0 - 3, y0 - 3, w + 4, h + 4, RUSH_COLOR_GRID_LINE);
+    riv_draw_rect_line(x0 - 3, y0 - 3, w + 4, h + 4, RUSH_COLOR_GRID_LINE + colorOffset);
 
     // draw exit
     uint64_t xExit = x0 + w;
     uint64_t yExit0 = y0 + (cell_height * 2) - 2;
     uint64_t yExit1 = y0 + (cell_height * 3) - 1;
     riv_draw_line(xExit, yExit0, xExit, yExit1, RUSH_COLOR_BACKGROUND);
-    riv_draw_line(xExit, yExit0, xExit + 4, yExit0, RUSH_COLOR_GRID_LINE);
-    riv_draw_line(xExit, yExit1, xExit + 4, yExit1, RUSH_COLOR_GRID_LINE);
+    riv_draw_line(xExit, yExit0, xExit + 4, yExit0, RUSH_COLOR_GRID_LINE + colorOffset);
+    riv_draw_line(xExit, yExit1, xExit + 4, yExit1, RUSH_COLOR_GRID_LINE + colorOffset);
 
     // draw entry
     if (drawEntry)
     {
         uint64_t xEntry = x0 - 3;
         riv_draw_line(xEntry, yExit0, xEntry, yExit1, RUSH_COLOR_BACKGROUND);
-        // riv_draw_line(xEntry, yExit0, xEntry - 4, yExit0, RUSH_COLOR_GRID_LINE);
-        // riv_draw_line(xEntry, yExit1, xEntry - 4, yExit1, RUSH_COLOR_GRID_LINE);
+        // riv_draw_line(xEntry, yExit0, xEntry - 4, yExit0, RUSH_COLOR_GRID_LINE + colorOffset);
+        // riv_draw_line(xEntry, yExit1, xEntry - 4, yExit1, RUSH_COLOR_GRID_LINE + colorOffset);
     }
 
     // draw pieces
     if (drawPrimaryPiece)
     {
-        pieces[0].Draw(x0, y0, w, h, RUSH_COLOR_RED_5, 0 == selected);
+        pieces[0].Draw(x0, y0, w, h, RUSH_COLOR_RED_5 + colorOffset, 0 == selected);
     }
-    if (pieceColor > 0)
+    if (drawPieces)
     {
         for (size_t i = 1; i < pieces.size(); i++)
         {
-            pieces[i].Draw(x0, y0, w, h, pieceColor, i == selected);
+            pieces[i].Draw(x0, y0, w, h, RUSH_COLOR_TEAL_5 + colorOffset, i == selected);
         }
     }
 

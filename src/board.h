@@ -32,7 +32,7 @@ public:
 
     bool MoveSelectedForward();
 
-    void Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryPiece, uint32_t pieceColor, bool drawEntry) const;
+    void Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryPiece, bool drawPieces, uint32_t colorOffset, bool drawEntry) const;
 
     bool Solved() const;
 
@@ -45,7 +45,7 @@ public:
     {
         // how many miliseconds we give the player per move
         // TODO: maybe make this variable to make it harder as player advances
-        return 1000;
+        return 3000;
     }
 
     uint64_t MaxTime() const
