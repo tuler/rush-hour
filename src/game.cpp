@@ -257,12 +257,12 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
 
         // Draw boards with interpolated positions
         current.Draw(32 - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, false, RUSH_COLOR_PIECE, false);
-        next.Draw(32 + riv->width - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, !drawPrimary, 0, true);
+        next.Draw(32 + riv->width - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, !drawPrimary, RUSH_COLOR_PIECE, true);
 
         // Draw fixed primary piece
         if (drawPrimary)
         {
-            piece.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, RUSH_COLOR_PIECE);
+            piece.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, RUSH_COLOR_RED_5, true);
         }
 
         // draw score
@@ -340,7 +340,7 @@ void Game::InitialTransition(Board &next)
         next.Draw(32 + riv->width - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, false, 0, true);
 
         // Draw fixed primary piece
-        next.PrimaryPiece().Draw(32 - (256 - offset), 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, RUSH_COLOR_PIECE);
+        next.PrimaryPiece().Draw(32 - (256 - offset), 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, RUSH_COLOR_RED_5, true);
 
         // present
         riv_present();

@@ -1,12 +1,10 @@
 #include "color.h"
 #include "piece.h"
 
-Piece::Piece(char label,
-             uint64_t position,
+Piece::Piece(uint64_t position,
              uint64_t size,
              uint64_t stride)
-    : label(label),
-      position(position),
+    : position(position),
       size(size),
       stride(stride)
 {
@@ -43,7 +41,7 @@ void Piece::Move(int steps)
     position += stride * steps;
 }
 
-void Piece::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool selected, uint32_t pieceColor) const
+void Piece::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, uint32_t color, bool selected) const
 {
     int64_t p = 2;                   // padding
     int64_t cw = w / RUSH_GRID_SIZE; // cell width
@@ -57,7 +55,6 @@ void Piece::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool selected, ui
     int64_t py1 = (i1 / RUSH_GRID_SIZE) * ch;
     int64_t pw = px1 - px0 + cw - p;
     int64_t ph = py1 - py0 + ch - p;
-    uint32_t color = label == 'A' ? RUSH_COLOR_PRIMARY_PIECE : pieceColor;
     riv_draw_rect_fill(x0 + px0, y0 + py0, pw, ph, color);
     if (selected)
     {

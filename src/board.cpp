@@ -39,7 +39,7 @@ Board::Board(uint64_t index, std::string desc, uint64_t moves) : index(index),
         const auto &ps = positions[label];
         // XXX: validate positions
         const int stride = ps[1] - ps[0];
-        pieces.push_back(Piece(label, ps[0], ps.size(), stride));
+        pieces.push_back(Piece(ps[0], ps.size(), stride));
         riv_printf("piece %c position %02d size %d stride %d\n", label, ps[0], ps.size(), stride);
     }
 
@@ -166,13 +166,13 @@ void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryP
     // draw pieces
     if (drawPrimaryPiece)
     {
-        pieces[0].Draw(x0, y0, w, h, 0 == selected, pieceColor);
+        pieces[0].Draw(x0, y0, w, h, RUSH_COLOR_RED_5, 0 == selected);
     }
     if (pieceColor > 0)
     {
         for (size_t i = 1; i < pieces.size(); i++)
         {
-            pieces[i].Draw(x0, y0, w, h, i == selected, pieceColor);
+            pieces[i].Draw(x0, y0, w, h, pieceColor, i == selected);
         }
     }
 

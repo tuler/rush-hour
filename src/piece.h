@@ -10,12 +10,7 @@ extern "C"
 class Piece
 {
 public:
-    explicit Piece(char label, uint64_t position, uint64_t size, uint64_t stride);
-
-    char Label() const
-    {
-        return label;
-    }
+    explicit Piece(uint64_t position, uint64_t size, uint64_t stride);
 
     uint64_t Position() const
     {
@@ -60,12 +55,9 @@ public:
 
     void Move(int steps);
 
-    void Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool selected, uint32_t pieceColor) const;
+    void Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, uint32_t color, bool selected) const;
 
 private:
-    // just a label. primary is A
-    char label;
-
     // 0 to (RUSH_GRID_SIZE * RUSH_GRID_SIZE - 1) (35 on 6x6)
     uint64_t position;
 
