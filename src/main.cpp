@@ -1,16 +1,13 @@
 #include <stdexcept>
-
 extern "C"
 {
 #include "riv.h"
 }
 
-#include "board.h"
 #include "color.h"
 #include "config.h"
 #include "file.h"
 #include "game.h"
-#include "piece.h"
 
 void draw_palette()
 {

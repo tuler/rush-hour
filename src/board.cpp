@@ -138,20 +138,12 @@ bool Board::MoveSelectedForward()
 
 void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryPiece, float piecesAlpha) const
 {
-    int64_t cell_width = w / RUSH_GRID_SIZE;
     int64_t cell_height = h / RUSH_GRID_SIZE;
 
     riv_draw_rect_fill(x0, y0, w, h, RUSH_COLOR_BOARD);
 
-    // draw grid
-    for (int64_t x = x0; x <= x0 + w; x += cell_width)
-    {
-        riv_draw_line(x, y0, x, y0 + h, RUSH_COLOR_GRID_LINE);
-    }
-    for (int64_t y = y0; y <= y0 + h; y += cell_height)
-    {
-        riv_draw_line(x0, y, x0 + w, y, RUSH_COLOR_GRID_LINE);
-    }
+    // draw border
+    riv_draw_rect_line(x0, y0, RUSH_GRID_SIZE * 32 + 1, RUSH_GRID_SIZE * 32 + 1, RUSH_COLOR_GRID_LINE);
 
     // draw exit
     uint64_t xExit = x0 + w;

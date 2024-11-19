@@ -141,7 +141,7 @@ uint64_t Game::Play(Board &board)
 {
     // how many miliseconds we give the player per move
     // TODO: maybe make this variable to make it harder as player advances
-    uint64_t ms_per_move = 3000;
+    uint64_t ms_per_move = 30000;
 
     // how much time we give the player to complete the level
     uint64_t max_time = ms_per_move * board.Moves();
@@ -260,8 +260,8 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
         bool drawPrimary = offset < ((int)riv->width - delta * 32);
 
         // Draw boards with interpolated positions
-        current.Draw(32 - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, false, true);
-        next.Draw(32 + riv->width - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, !drawPrimary, false);
+        current.Draw(32 - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, false, 1.0);
+        next.Draw(32 + riv->width - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, !drawPrimary, 0.0);
 
         // Draw fixed primary piece
         if (drawPrimary)
@@ -283,6 +283,37 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
                     256 - 64 - text_size.width - 4,
                     text_size.height,
                     (float)diff_score / max_time - (smoothProgress * diff_score / max_time));
+
+        // present
+        riv_present();
+    }
+
+    // draw final state with interpolated alpha for pieces
+    for (int step = 0; step <= STEPS; step++)
+    {
+        // clear screen
+        riv_clear(RUSH_COLOR_BACKGROUND);
+
+        // Calculate smooth progress (0.0 to 1.0)
+        float progress = static_cast<float>(step) / STEPS;
+        float smoothProgress = ease(progress);
+
+        // Draw next board
+        next.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, smoothProgress);
+
+        // draw score
+        riv_recti text_size = riv_draw_text(("Score " + std::to_string(new_score)).c_str(),
+                                            RIV_SPRITESHEET_FONT_5X7, RIV_RIGHT,
+                                            256 - 32,
+                                            256 - 16,
+                                            1,
+                                            RIV_COLOR_BLACK);
+        // draw timer
+        health.Draw(32,
+                    256 - 16 - (text_size.height / 2),
+                    256 - 64 - text_size.width - 4,
+                    text_size.height,
+                    (float)diff_score / max_time - (diff_score / max_time));
 
         // present
         riv_present();

@@ -43,7 +43,7 @@ extern "C"
 
 #define RUSH_COLOR_BACKGROUND 1
 #define RUSH_COLOR_BOARD 13
-#define RUSH_COLOR_GRID_LINE 3
+#define RUSH_COLOR_GRID_LINE 0
 #define RUSH_COLOR_PRIMARY_PIECE 25
 #define RUSH_COLOR_PIECE 19
 #define RUSH_COLOR_PIECE_OUTLINE 0
@@ -58,7 +58,7 @@ void color_setup();
 /**
  * Get the color with the given alpha.
  */
-uint32_t color_alpha(uint32_t color, float alpha);
+uint32_t color_alpha(uint32_t color, uint32_t base_color, float alpha);
 
 /**
  * Get the black or white color with the given alpha.
