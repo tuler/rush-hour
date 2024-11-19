@@ -305,11 +305,12 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
                                             1,
                                             RIV_COLOR_BLACK);
         // draw timer
+        float p = (float)(color - RUSH_COLOR_TEAL_0) / (RUSH_COLOR_TEAL_5 - RUSH_COLOR_TEAL_0);
         health.Draw(32,
                     256 - 16 - (text_size.height / 2),
                     256 - 64 - text_size.width - 4,
                     text_size.height,
-                    (float)diff_score / max_time - (diff_score / max_time));
+                    p);
 
         // present
         riv_present();
