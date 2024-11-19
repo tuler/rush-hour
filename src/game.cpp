@@ -27,6 +27,11 @@ void Game::Start()
     do
     {
         result = Play(board);
+        score += result;
+
+        // write score out
+        riv->outcard_len = riv_snprintf((char *)riv->outcard, RIV_SIZE_OUTCARD, "JSON{\"score\":%d}", score);
+
         if (l + 1 >= file.size())
         {
             // gone through all levels
@@ -39,10 +44,10 @@ void Game::Start()
         }
 
         Board next = Board(l + 1, file[l + 1].desc, file[l + 1].moves);
-        Transition(board, next, score, score + result);
+        Transition(board, next, score - result, score);
         board = next;
-        score += result;
         l++;
+
     } while (result > 0);
     GameOver(board);
 }
