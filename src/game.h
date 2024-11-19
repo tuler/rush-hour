@@ -29,4 +29,6 @@ private:
     void Transition(Board &current, Board &next, uint64_t old_score, uint64_t new_score);
 
     void InitialTransition(Board &next);
+
+    void GameOver(Board &board);
 };

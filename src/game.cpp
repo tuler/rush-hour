@@ -44,6 +44,7 @@ void Game::Start()
         score += result;
         l++;
     } while (result > 0);
+    GameOver(board);
 }
 
 void Game::Title()
@@ -140,12 +141,8 @@ void Game::Title()
 
 uint64_t Game::Play(Board &board)
 {
-    // how many miliseconds we give the player per move
-    // TODO: maybe make this variable to make it harder as player advances
-    uint64_t ms_per_move = 3000;
-
     // how much time we give the player to complete the level
-    uint64_t max_time = ms_per_move * board.Moves();
+    uint64_t max_time = board.MaxTime();
 
     uint64_t start_time = riv->time_ms;
     uint64_t timeout = start_time + max_time;
@@ -236,10 +233,8 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
         return (1.0f - std::cos(x * M_PI)) / 2.0f;
     };
 
-    uint64_t ms_per_move = 3000;
-
     // how much time we give the player to complete the level
-    uint64_t max_time = ms_per_move * current.Moves();
+    uint64_t max_time = current.MaxTime();
 
     uint64_t diff_score = new_score - old_score;
 
@@ -370,6 +365,35 @@ void Game::InitialTransition(Board &next)
         // present
         riv_present();
     }
+}
+
+void Game::GameOver(Board &board)
+{
+    do
+    {
+        riv_clear(RUSH_COLOR_BACKGROUND);
+
+        // draw board
+        board.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, RUSH_COLOR_TEAL_2, false);
+
+        // draw score
+        riv_draw_text(("Score " + std::to_string(Score())).c_str(),
+                      RIV_SPRITESHEET_FONT_5X7,
+                      RIV_RIGHT,
+                      256 - 32,
+                      256 - 16,
+                      1,
+                      RIV_COLOR_BLACK);
+
+        riv_draw_text("GAME OVER",
+                      RIV_SPRITESHEET_FONT_5X7,
+                      RIV_LEFT,
+                      32 - 3,
+                      256 - 16,
+                      1,
+                      RIV_COLOR_BLACK);
+
+    } while (riv_present());
 }
 
 uint64_t Game::Score() const

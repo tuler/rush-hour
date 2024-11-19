@@ -41,6 +41,18 @@ public:
         return moves;
     }
 
+    uint64_t TimePerMove() const
+    {
+        // how many miliseconds we give the player per move
+        // TODO: maybe make this variable to make it harder as player advances
+        return 1000;
+    }
+
+    uint64_t MaxTime() const
+    {
+        return Moves() * TimePerMove();
+    }
+
 private:
     // board level
     uint64_t index;
