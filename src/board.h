@@ -32,7 +32,7 @@ public:
 
     bool MoveSelectedForward();
 
-    void Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryPiece, bool drawPieces) const;
+    void Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryPiece, float piecesAlpha) const;
 
     bool Solved() const;
 

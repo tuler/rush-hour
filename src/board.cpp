@@ -3,7 +3,7 @@
 #include <string>
 
 #include "board.h"
-#include "config.h"
+#include "color.h"
 
 Board::Board(uint64_t index, std::string desc, uint64_t moves) : index(index),
                                                                  moves(moves),
@@ -136,7 +136,7 @@ bool Board::MoveSelectedForward()
     return true;
 }
 
-void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryPiece, bool drawPieces) const
+void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryPiece, float piecesAlpha) const
 {
     int64_t cell_width = w / RUSH_GRID_SIZE;
     int64_t cell_height = h / RUSH_GRID_SIZE;
@@ -161,13 +161,13 @@ void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryP
     // draw pieces
     if (drawPrimaryPiece)
     {
-        pieces[0].Draw(x0, y0, w, h, 0 == selected);
+        pieces[0].Draw(x0, y0, w, h, 0 == selected, 1.0);
     }
-    if (drawPieces)
+    if (piecesAlpha > 0)
     {
         for (size_t i = 1; i < pieces.size(); i++)
         {
-            pieces[i].Draw(x0, y0, w, h, i == selected);
+            pieces[i].Draw(x0, y0, w, h, i == selected, piecesAlpha);
         }
     }
 
