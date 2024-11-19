@@ -60,7 +60,7 @@ public:
 
     void Move(int steps);
 
-    void Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool selected, float alpha) const;
+    void Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool selected, uint32_t pieceColor) const;
 
 private:
     // just a label. primary is A

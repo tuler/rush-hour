@@ -141,7 +141,7 @@ uint64_t Game::Play(Board &board)
 {
     // how many miliseconds we give the player per move
     // TODO: maybe make this variable to make it harder as player advances
-    uint64_t ms_per_move = 30000;
+    uint64_t ms_per_move = 3000;
 
     // how much time we give the player to complete the level
     uint64_t max_time = ms_per_move * board.Moves();
@@ -203,7 +203,7 @@ uint64_t Game::Play(Board &board)
         riv_clear(RUSH_COLOR_BACKGROUND);
 
         // draw board
-        board.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, true);
+        board.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, RUSH_COLOR_PIECE, false);
 
         // draw score
         riv_recti text_size = riv_draw_text(("Score " + std::to_string(score)).c_str(),
@@ -260,8 +260,8 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
         bool drawPrimary = offset < ((int)riv->width - delta * 32);
 
         // Draw boards with interpolated positions
-        current.Draw(32 - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, false, 1.0);
-        next.Draw(32 + riv->width - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, !drawPrimary, 0.0);
+        current.Draw(32 - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, false, RUSH_COLOR_PIECE, false);
+        next.Draw(32 + riv->width - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, !drawPrimary, 0, true);
 
         // Draw fixed primary piece
         if (drawPrimary)
@@ -289,17 +289,13 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
     }
 
     // draw final state with interpolated alpha for pieces
-    for (int step = 0; step <= STEPS; step++)
+    for (int color = RUSH_COLOR_TEAL_0; color <= RUSH_COLOR_TEAL_5; color++)
     {
         // clear screen
         riv_clear(RUSH_COLOR_BACKGROUND);
 
-        // Calculate smooth progress (0.0 to 1.0)
-        float progress = static_cast<float>(step) / STEPS;
-        float smoothProgress = ease(progress);
-
         // Draw next board
-        next.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, smoothProgress);
+        next.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, color, false);
 
         // draw score
         riv_recti text_size = riv_draw_text(("Score " + std::to_string(new_score)).c_str(),
