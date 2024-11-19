@@ -11,6 +11,60 @@ extern "C"
 #include "game.h"
 #include "piece.h"
 
+void setup_palette()
+{
+    // https://coolors.co/gradient-palette/000000-ffffff?number=8
+    riv->palette[RUSH_COLOR_BLACK] = 0x000000;
+    riv->palette[RUSH_COLOR_WHITE] = 0xFFFFFF;
+
+    riv->palette[RUSH_COLOR_GREY_0] = 0xDBDBDB;
+    riv->palette[RUSH_COLOR_GREY_1] = 0xB6B6B6;
+    riv->palette[RUSH_COLOR_GREY_2] = 0x929292;
+    riv->palette[RUSH_COLOR_GREY_3] = 0x6D6D6D;
+    riv->palette[RUSH_COLOR_GREY_4] = 0x494949;
+    riv->palette[RUSH_COLOR_GREY_5] = 0x242424;
+
+    // https://coolors.co/gradient-palette/f2eacd-ffffff?number=7
+    riv->palette[RUSH_COLOR_BEIGE_0] = 0xF7FCFD;
+    riv->palette[RUSH_COLOR_BEIGE_1] = 0xEEF8FB;
+    riv->palette[RUSH_COLOR_BEIGE_2] = 0xE6F5F9;
+    riv->palette[RUSH_COLOR_BEIGE_3] = 0xDEF1F6;
+    riv->palette[RUSH_COLOR_BEIGE_4] = 0xD5EEF4;
+    riv->palette[RUSH_COLOR_BEIGE_5] = 0xCDEAF2;
+
+    // https://coolors.co/gradient-palette/338899-ffffff?number=7
+    riv->palette[RUSH_COLOR_TEAL_0] = 0xEEEBDD;
+    riv->palette[RUSH_COLOR_TEAL_1] = 0xDDD7BB;
+    riv->palette[RUSH_COLOR_TEAL_2] = 0xCCC499;
+    riv->palette[RUSH_COLOR_TEAL_3] = 0xBBB077;
+    riv->palette[RUSH_COLOR_TEAL_4] = 0xAA9C55;
+    riv->palette[RUSH_COLOR_TEAL_5] = 0x998833;
+
+    // https://coolors.co/gradient-palette/cc3333-ffffff?number=7
+    riv->palette[RUSH_COLOR_RED_0] = 0xDDDDF7;
+    riv->palette[RUSH_COLOR_RED_1] = 0xBBBBEE;
+    riv->palette[RUSH_COLOR_RED_2] = 0x9999E6;
+    riv->palette[RUSH_COLOR_RED_3] = 0x7777DD;
+    riv->palette[RUSH_COLOR_RED_4] = 0x5555D5;
+    riv->palette[RUSH_COLOR_RED_5] = 0x3333CC;
+
+    // https://coolors.co/gradient-palette/ffd800-ffffff?number=7
+    riv->palette[RUSH_COLOR_YELLOW_0] = 0xD5F9FF;
+    riv->palette[RUSH_COLOR_YELLOW_1] = 0xAAF2FF;
+    riv->palette[RUSH_COLOR_YELLOW_2] = 0x80ECFF;
+    riv->palette[RUSH_COLOR_YELLOW_3] = 0x55E5FF;
+    riv->palette[RUSH_COLOR_YELLOW_4] = 0x2ADFFF;
+    riv->palette[RUSH_COLOR_YELLOW_5] = 0x00D8FF;
+}
+
+void draw_palette()
+{
+    for (int i = 0; i < 32; i++)
+    {
+        riv_draw_rect_fill(i * 8, 0, 8, 8, i);
+    }
+}
+
 int main(const int argc, const char **argv)
 {
     riv->width = SCREEN_WIDTH;
@@ -18,15 +72,7 @@ int main(const int argc, const char **argv)
     riv->target_fps = TARGET_FPS;
 
     // customize palette
-    riv->palette[RUSH_COLOR_BACKGROUND] = 0xFFFFFF;
-    riv->palette[RUSH_COLOR_BOARD] = 0xCDEAF2;
-    riv->palette[RUSH_COLOR_BLOCKED] = 0x606DD9;
-    riv->palette[RUSH_COLOR_GRID_LINE] = 0xAAAAAA;
-    riv->palette[RUSH_COLOR_PRIMARY_PIECE] = 0x3333CC;
-    riv->palette[RUSH_COLOR_PIECE] = 0x998833;
-    riv->palette[RUSH_COLOR_PIECE_OUTLINE] = 0x222222;
-    riv->palette[RUSH_COLOR_LABEL] = 0x222222;
-    riv->palette[RUSH_COLOR_WALL] = 0x222222;
+    setup_palette();
 
     // load levels from file
     if (argc < 2)

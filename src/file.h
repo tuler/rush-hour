@@ -2,6 +2,10 @@
 
 #include <string>
 #include <vector>
+extern "C"
+{
+#include "riv.h"
+}
 
 typedef struct
 {

@@ -1,10 +1,14 @@
 #include "config.h"
 #include "piece.h"
 
-Piece::Piece(char label, uint64_t position, uint64_t size, uint64_t stride) : label(label),
-                                                                              position(position),
-                                                                              size(size),
-                                                                              stride(stride)
+Piece::Piece(char label,
+             uint64_t position,
+             uint64_t size,
+             uint64_t stride)
+    : label(label),
+      position(position),
+      size(size),
+      stride(stride)
 {
 }
 
@@ -58,7 +62,7 @@ void Piece::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool selected) co
     uint32_t color = label == 'A' ? RUSH_COLOR_PRIMARY_PIECE : RUSH_COLOR_PIECE;
     if (selected)
     {
-        riv_draw_rect_line(x0 + px - 1, y0 + py - 1, pw + 2, ph + 2, RIV_COLOR_BLACK);
+        riv_draw_rect_line(x0 + px - 1, y0 + py - 1, pw + 2, ph + 2, RUSH_COLOR_PIECE_OUTLINE);
     }
     riv_draw_rect_fill(x0 + px, y0 + py, pw, ph, color);
 }
