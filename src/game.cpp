@@ -139,6 +139,16 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
         return (1.0f - std::cos(x * M_PI)) / 2.0f;
     };
 
+    uint64_t ms_per_move = 3000;
+
+    // how much time we give the player to complete the level
+    uint64_t max_time = ms_per_move * current.Moves();
+
+    uint64_t diff_score = new_score - old_score;
+
+    // health meter
+    Health health = Health(RUSH_COLOR_GRID_LINE, RUSH_COLOR_PIECE);
+
     // draw transition from one board to the next
     for (int step = 0; step <= STEPS; step++)
     {
@@ -171,6 +181,13 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
                                             256 - 16,
                                             1,
                                             RIV_COLOR_BLACK);
+        // draw timer
+        health.Draw(32,
+                    256 - 16 - (text_size.height / 2),
+                    256 - 64 - text_size.width - 2,
+                    text_size.height,
+                    (float)diff_score / max_time - (smoothProgress * diff_score / max_time));
+
         // present
         riv_present();
     }
