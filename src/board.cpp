@@ -36,11 +36,23 @@ Board::Board(uint64_t index, std::string desc, uint64_t moves) : index(index),
     pieces.reserve(labels.size());
     for (const char label : labels)
     {
+        if (label == 'x')
+        {
+            // process walls on another pass
+            continue;
+        }
         const auto &ps = positions[label];
         // XXX: validate positions
         const int stride = ps[1] - ps[0];
         pieces.push_back(Piece(ps[0], ps.size(), stride));
         riv_printf("piece %c position %02d size %d stride %d\n", label, ps[0], ps.size(), stride);
+    }
+
+    // create walls
+    for (const auto &p : positions['x'])
+    {
+        pieces.push_back(Piece(p, 1, 1));
+        riv_printf("wall position %02d\n", p);
     }
 }
 
@@ -166,9 +178,13 @@ void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, uint32_t colorOff
     {
         pieces[0].Draw(x0, y0, w, h, RUSH_COLOR_RED_5 + colorOffset, 0 == selected);
     }
-    if (flags & RUSH_DRAW_PIECES)
+    for (size_t i = 1; i < pieces.size(); i++)
     {
-        for (size_t i = 1; i < pieces.size(); i++)
+        if (pieces[i].Fixed() && (flags & RUSH_DRAW_WALLS))
+        {
+            pieces[i].Draw(x0, y0, w, h, RUSH_COLOR_GREY_5 + colorOffset, i == selected);
+        }
+        else if (flags & RUSH_DRAW_PIECES)
         {
             pieces[i].Draw(x0, y0, w, h, RUSH_COLOR_TEAL_5 + colorOffset, i == selected);
         }

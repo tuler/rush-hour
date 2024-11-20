@@ -215,7 +215,7 @@ uint64_t Game::Play(Board &board)
 
         // draw board
         board.Draw(32, 32, 6 * 32, 6 * 32, 0,
-                   RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_EXIT);
+                   RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_WALLS | RUSH_DRAW_EXIT);
 
         // draw score
         riv_recti text_size = riv_draw_text(("Score " + std::to_string(score)).c_str(),
@@ -269,7 +269,7 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
 
         // Draw boards with interpolated positions
         current.Draw(32 - offset, 32, 6 * 32, 6 * 32, 0,
-                     RUSH_DRAW_PIECES | RUSH_DRAW_EXIT);
+                     RUSH_DRAW_PIECES | RUSH_DRAW_WALLS | RUSH_DRAW_EXIT);
         next.Draw(32 + riv->width - offset, 32, 6 * 32, 6 * 32, 0,
                   RUSH_DRAW_EXIT | RUSH_DRAW_ENTRY | (drawPrimary ? 0 : RUSH_DRAW_PRIMARY_PIECE));
 
@@ -312,7 +312,7 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
 
         // Draw next board
         next.Draw(32, 32, 6 * 32, 6 * 32, colorOffset,
-                  RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_EXIT);
+                  RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_WALLS | RUSH_DRAW_EXIT);
         next.PrimaryPiece().Draw(32, 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_5, true);
 
         // draw score
@@ -379,7 +379,7 @@ void Game::InitialTransition(Board &next)
 
         // Draw next board
         next.Draw(32, 32, 6 * 32, 6 * 32, colorOffset,
-                  RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_EXIT);
+                  RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_WALLS | RUSH_DRAW_EXIT);
         next.PrimaryPiece().Draw(32, 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_5, true);
 
         // draw score
@@ -404,7 +404,7 @@ void Game::GameOver(Board &board)
 
         // draw board
         board.Draw(32, 32, 6 * 32, 6 * 32, -3,
-                   RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_EXIT);
+                   RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_WALLS | RUSH_DRAW_EXIT);
 
         // draw score
         riv_draw_text(("Score " + std::to_string(Score())).c_str(),
