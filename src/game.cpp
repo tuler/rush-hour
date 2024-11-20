@@ -19,7 +19,7 @@ Game::Game(File &file) : file(file)
 
 void Game::Start()
 {
-    uint64_t music = seqt_play(seqt_make_source_from_file("songs/01.seqt.rivcard"), -1);
+    uint64_t music = seqt_play(seqt_make_source_from_file("music.rivcard"), -1);
 
     // title screen
     Title();
