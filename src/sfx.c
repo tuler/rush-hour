@@ -1,4 +1,6 @@
-#include "sound.h"
+#include <riv.h>
+
+#include "sfx.h"
 
 riv_waveform_desc move_sfx = {
     .type = RIV_WAVEFORM_TRIANGLE,
@@ -45,22 +47,22 @@ riv_waveform_desc end_sfx = {
     .pan = 0,
 };
 
-void play_start()
+void sfx_start()
 {
     riv_waveform(&coin_sfx);
 }
 
-void play_move()
+void sfx_move()
 {
     riv_waveform(&move_sfx);
 }
 
-void play_score()
+void sfx_score()
 {
     riv_waveform(&coin_sfx);
 }
 
-void play_game_over()
+void sfx_game_over()
 {
     riv_waveform(&end_sfx);
 }

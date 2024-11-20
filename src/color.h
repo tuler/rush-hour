@@ -1,7 +1,5 @@
-extern "C"
-{
-#include "riv.h"
-}
+#ifndef COLOR_H
+#define COLOR_H
 
 #define RUSH_COLOR_BLACK 0
 #define RUSH_COLOR_WHITE 1
@@ -59,3 +57,5 @@ void color_setup();
  * Draw the color palette in RIV.
  */
 void color_draw_palette();
+
+#endif

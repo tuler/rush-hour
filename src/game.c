@@ -1,88 +1,41 @@
-#include <algorithm>
-#include <map>
-#include <cmath>
-#include <stdexcept>
-#include <string>
-#include <vector>
+#include <math.h>
 
 #include "board.h"
 #include "color.h"
+#include "draw.h"
+#include "file.h"
 #include "game.h"
-#include "health.h"
 #include "seqt.h"
-#include "sound.h"
+#include "sfx.h"
 
-Game::Game(File &file) : file(file)
+// Ease in-out function using sine
+float ease(float x)
 {
-    score = 0;
+    return (1.0f - cos(x * M_PI)) / 2.0f;
 }
 
-void Game::Start()
+int64_t interpolate(int64_t a, int64_t b, float t)
 {
-    uint64_t music = seqt_play(seqt_make_source_from_file("music.rivcard"), -1);
-
-    // title screen
-    Title();
-
-    uint64_t l = 0; // level
-    uint64_t result = 0;
-    Board board = Board(l, file[l].desc, file[l].moves);
-    InitialTransition(board);
-    do
-    {
-        result = Play(board);
-        score += result;
-
-        // write score and level out
-        riv->outcard_len = riv_snprintf(
-            (char *)riv->outcard, RIV_SIZE_OUTCARD,
-            "JSON{\"score\":%d,\"level\":%d}",
-            score,
-            l + 1);
-
-        if (l + 1 >= file.size())
-        {
-            // gone through all levels
-            break;
-        }
-        if (result == 0)
-        {
-            // player ran out of time
-            break;
-        }
-
-        Board next = Board(l + 1, file[l + 1].desc, file[l + 1].moves);
-        Transition(board, next, score - result, score);
-        board = next;
-        l++;
-
-    } while (result > 0);
-    seqt_stop(music);
-    GameOver(board);
+    return a + (b - a) * t;
 }
 
-void Game::Title()
+struct Game game_create(struct File *file)
+{
+    struct Game g = {.score = 0, .file = file};
+    return g;
+}
+
+void game_title(struct Game *game)
 {
     const int STEPS = riv->width / 6;
     uint64_t img = riv_make_image("sprite.png", RUSH_COLOR_WHITE);
-
-    // Ease in-out function using sine
-    auto ease = [](float x) -> float
-    {
-        return (1.0f - std::cos(x * M_PI)) / 2.0f;
-    };
-
-    auto interpolate = [](int64_t a, int64_t b, float t) -> int64_t
-    {
-        return a + (b - a) * t;
-    };
 
     for (int step = 0; step <= STEPS; step++)
     {
         riv_clear(RUSH_COLOR_BACKGROUND);
 
         // Calculate smooth progress (0.0 to 1.0)
-        float progress = static_cast<float>(step) / STEPS;
+        float progress = (float)step / STEPS;
         float smoothProgress = ease(progress);
 
         riv_clear(RUSH_COLOR_BACKGROUND);
@@ -129,7 +82,7 @@ void Game::Title()
             riv->keys[RIV_GAMEPAD_SELECT].press ||
             riv->keys[RIV_GAMEPAD_START].press)
         {
-            play_start();
+            sfx_start();
             break;
         }
         seqt_poll();
@@ -140,7 +93,7 @@ void Game::Title()
         riv_clear(RUSH_COLOR_BACKGROUND);
 
         // Calculate smooth progress (0.0 to 1.0)
-        float progress = static_cast<float>(step) / STEPS;
+        float progress = (float)step / STEPS;
         float smoothProgress = ease(progress);
 
         riv_clear(RUSH_COLOR_BACKGROUND);
@@ -157,10 +110,10 @@ void Game::Title()
     }
 }
 
-uint64_t Game::Play(Board &board)
+uint64_t game_play(struct Game *game, struct Board *board)
 {
     // how much time we give the player to complete the level
-    uint64_t max_time = board.MaxTime();
+    uint64_t max_time = board_max_time(board);
 
     uint64_t start_time = riv->time_ms;
     uint64_t timeout = start_time + max_time;
@@ -177,7 +130,7 @@ uint64_t Game::Play(Board &board)
         uint64_t time_left = timeout - time_ms;
 
         // check if board is solved
-        if (board.Solved())
+        if (board_is_solved(board))
         {
             // return how much time is left (will be added to score)
             return time_left;
@@ -190,7 +143,7 @@ uint64_t Game::Play(Board &board)
             riv->keys[RIV_GAMEPAD_L3].press ||
             riv->keys[RIV_GAMEPAD_SELECT].press)
         {
-            board.SelectPrevious();
+            board_select_previous(board);
         }
         if (riv->keys[RIV_GAMEPAD_A3].press ||
             riv->keys[RIV_GAMEPAD_A4].press ||
@@ -199,37 +152,33 @@ uint64_t Game::Play(Board &board)
             riv->keys[RIV_GAMEPAD_R3].press ||
             riv->keys[RIV_GAMEPAD_START].press)
         {
-            board.SelectNext();
+            board_select_next(board);
         }
         if (riv->keys[RIV_GAMEPAD_UP].press ||
             riv->keys[RIV_GAMEPAD_LEFT].press)
         {
-            board.MoveSelectedBackward();
-            play_move();
+            board_move_selected_backward(board);
+            sfx_move();
         }
         if (riv->keys[RIV_GAMEPAD_DOWN].press ||
             riv->keys[RIV_GAMEPAD_RIGHT].press)
         {
-            board.MoveSelectedForward();
-            play_move();
+            board_move_selected_forward(board);
+            sfx_move();
         }
 
         // clear screen
         riv_clear(RUSH_COLOR_BACKGROUND);
 
         // draw board
-        board.Draw(32, 32, 6 * 32, 6 * 32, 0,
+        draw_board(board, 32, 32, 6 * 32, 6 * 32, 0,
                    RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_WALLS | RUSH_DRAW_EXIT);
 
         // draw score
-        riv_recti text_size = riv_draw_text(("Score " + std::to_string(score)).c_str(),
-                                            RIV_SPRITESHEET_FONT_5X7, RIV_RIGHT,
-                                            256 - 32,
-                                            256 - 16,
-                                            1,
-                                            RIV_COLOR_BLACK);
+        riv_recti text_size = draw_score(256 - 32, 256 - 16, game->score);
+
         // draw timer
-        health_draw(32 - 3,
+        draw_health(32 - 3,
                     256 - 16 - (text_size.height / 2),
                     256 - 64 - text_size.width - 4,
                     text_size.height,
@@ -240,20 +189,15 @@ uint64_t Game::Play(Board &board)
     return 0;
 }
 
-void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t new_score)
+void game_transition(struct Game *game, struct Board *current, struct Board *next, uint64_t old_score, uint64_t new_score)
 {
-    const Piece &piece = current.PrimaryPiece();
-    int delta = current.PrimaryPiece().Position() - next.PrimaryPiece().Position();
+    const struct Piece *current_piece = &current->pieces[0];
+    const struct Piece *next_piece = &next->pieces[0];
+    int delta = current_piece->position - next_piece->position;
     const int STEPS = riv->width / 4;
 
-    // Ease in-out function using sine
-    auto ease = [](float x) -> float
-    {
-        return (1.0f - std::cos(x * M_PI)) / 2.0f;
-    };
-
     // how much time we give the player to complete the level
-    uint64_t max_time = current.MaxTime();
+    uint64_t max_time = board_max_time(current);
 
     uint64_t diff_score = new_score - old_score;
 
@@ -264,40 +208,35 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
         riv_clear(RUSH_COLOR_BACKGROUND);
 
         // Calculate smooth progress (0.0 to 1.0)
-        float progress = static_cast<float>(step) / STEPS;
+        float progress = (float)step / STEPS;
         float smoothProgress = ease(progress);
 
         // Calculate interpolated offset
-        int offset = static_cast<int>(smoothProgress * riv->width);
+        int offset = (int)(smoothProgress * riv->width);
         bool drawPrimary = offset < ((int)riv->width - delta * 32);
 
         // Draw boards with interpolated positions
-        current.Draw(32 - offset, 32, 6 * 32, 6 * 32, 0,
-                     RUSH_DRAW_PIECES | RUSH_DRAW_WALLS | RUSH_DRAW_EXIT);
-        next.Draw(32 + riv->width - offset, 32, 6 * 32, 6 * 32, 0,
-                  RUSH_DRAW_EXIT | RUSH_DRAW_ENTRY | (drawPrimary ? 0 : RUSH_DRAW_PRIMARY_PIECE));
+        draw_board(current, 32 - offset, 32, 6 * 32, 6 * 32, 0,
+                   RUSH_DRAW_PIECES | RUSH_DRAW_WALLS | RUSH_DRAW_EXIT);
+        draw_board(next, 32 + riv->width - offset, 32, 6 * 32, 6 * 32, 0,
+                   RUSH_DRAW_EXIT | RUSH_DRAW_ENTRY | (drawPrimary ? 0 : RUSH_DRAW_PRIMARY_PIECE));
 
         // Draw fixed primary piece
         if (drawPrimary)
         {
-            piece.Draw(32, 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_5, true);
+            draw_piece(current_piece, 32, 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_5, true);
         }
 
         // draw score
         uint64_t sc = old_score + (new_score - old_score) * smoothProgress;
-        riv_recti text_size = riv_draw_text(("Score " + std::to_string(sc)).c_str(),
-                                            RIV_SPRITESHEET_FONT_5X7, RIV_RIGHT,
-                                            256 - 32,
-                                            256 - 16,
-                                            1,
-                                            RIV_COLOR_BLACK);
+        riv_recti text_size = draw_score(256 - 32, 256 - 16, sc);
         if (riv->frame % 4 == 0)
         {
-            play_score();
+            sfx_score();
         }
 
         // draw timer
-        health_draw(32 - 3,
+        draw_health(32 - 3,
                     256 - 16 - (text_size.height / 2),
                     256 - 64 - text_size.width - 4,
                     text_size.height,
@@ -315,20 +254,16 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
         riv_clear(RUSH_COLOR_BACKGROUND);
 
         // Draw next board
-        next.Draw(32, 32, 6 * 32, 6 * 32, colorOffset,
-                  RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_WALLS | RUSH_DRAW_EXIT);
-        next.PrimaryPiece().Draw(32, 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_5, true);
+        draw_board(next, 32, 32, 6 * 32, 6 * 32, colorOffset,
+                   RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_WALLS | RUSH_DRAW_EXIT);
+        draw_piece(&next->pieces[0], 32, 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_5, true);
 
         // draw score
-        riv_recti text_size = riv_draw_text(("Score " + std::to_string(new_score)).c_str(),
-                                            RIV_SPRITESHEET_FONT_5X7, RIV_RIGHT,
-                                            256 - 32,
-                                            256 - 16,
-                                            1,
-                                            RIV_COLOR_BLACK);
+        riv_recti text_size = draw_score(256 - 32, 256 - 16, new_score);
+
         // draw timer
         float p = (float)(colorOffset + 5) / 5;
-        health_draw(32 - 3,
+        draw_health(32 - 3,
                     256 - 16 - (text_size.height / 2),
                     256 - 64 - text_size.width - 4,
                     text_size.height,
@@ -340,15 +275,9 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
     }
 }
 
-void Game::InitialTransition(Board &next)
+void game_initial_transition(struct Game *game, struct Board *next)
 {
     const int STEPS = riv->width / 4;
-
-    // Ease in-out function using sine
-    auto ease = [](float x) -> float
-    {
-        return (1.0f - std::cos(x * M_PI)) / 2.0f;
-    };
 
     // draw transition from one board to the next
     for (int step = 0; step <= STEPS; step++)
@@ -357,18 +286,18 @@ void Game::InitialTransition(Board &next)
         riv_clear(RUSH_COLOR_BACKGROUND);
 
         // Calculate smooth progress (0.0 to 1.0)
-        float progress = static_cast<float>(step) / STEPS;
+        float progress = (float)step / STEPS;
         float smoothProgress = ease(progress);
 
         // Calculate interpolated offset
-        int offset = static_cast<int>(smoothProgress * riv->width);
+        int offset = (int)(smoothProgress * riv->width);
 
         // Draw boards with interpolated positions
-        next.Draw(32 + riv->width - offset, 32, 6 * 32, 6 * 32, 0,
-                  RUSH_DRAW_EXIT | RUSH_DRAW_ENTRY);
+        draw_board(next, 32 + riv->width - offset, 32, 6 * 32, 6 * 32, 0,
+                   RUSH_DRAW_EXIT | RUSH_DRAW_ENTRY);
 
         // Draw fixed primary piece
-        next.PrimaryPiece().Draw(32 - (256 - offset), 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_5, true);
+        draw_piece(&next->pieces[0], 32 - (256 - offset), 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_5, true);
 
         // present
         seqt_poll();
@@ -382,42 +311,32 @@ void Game::InitialTransition(Board &next)
         riv_clear(RUSH_COLOR_BACKGROUND);
 
         // Draw next board
-        next.Draw(32, 32, 6 * 32, 6 * 32, colorOffset,
-                  RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_WALLS | RUSH_DRAW_EXIT);
-        next.PrimaryPiece().Draw(32, 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_5, true);
+        draw_board(next, 32, 32, 6 * 32, 6 * 32, colorOffset,
+                   RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_WALLS | RUSH_DRAW_EXIT);
+        draw_piece(&next->pieces[0], 32, 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_5, true);
 
         // draw score
-        riv_draw_text(("Score " + std::to_string(0)).c_str(),
-                      RIV_SPRITESHEET_FONT_5X7, RIV_RIGHT,
-                      256 - 32,
-                      256 - 16,
-                      1,
-                      RIV_COLOR_BLACK);
+        draw_score(256 - 32, 256 - 16, 0);
+
         // present
         seqt_poll();
         riv_present();
     }
 }
 
-void Game::GameOver(Board &board)
+void game_over(struct Game *game, struct Board *board)
 {
-    play_game_over();
+    sfx_game_over();
     do
     {
         riv_clear(RUSH_COLOR_BACKGROUND);
 
         // draw board
-        board.Draw(32, 32, 6 * 32, 6 * 32, -3,
+        draw_board(board, 32, 32, 6 * 32, 6 * 32, -3,
                    RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_WALLS | RUSH_DRAW_EXIT);
 
         // draw score
-        riv_draw_text(("Score " + std::to_string(Score())).c_str(),
-                      RIV_SPRITESHEET_FONT_5X7,
-                      RIV_RIGHT,
-                      256 - 32,
-                      256 - 16,
-                      1,
-                      RIV_COLOR_BLACK);
+        draw_score(256 - 32, 256 - 16, game->score);
 
         riv_draw_text("GAME OVER",
                       RIV_SPRITESHEET_FONT_5X7,
@@ -431,7 +350,49 @@ void Game::GameOver(Board &board)
     } while (riv_present());
 }
 
-uint64_t Game::Score() const
+void game_start(struct Game *game)
 {
-    return score;
+    uint64_t music = seqt_play(seqt_make_source_from_file("music.rivcard"), -1);
+
+    // title screen
+    game_title(game);
+
+    uint64_t l = 0; // level
+    uint64_t result = 0;
+
+    struct File *file = game->file;
+    struct FileEntry entry = file->entries[l];
+    struct Board board = board_create(l, entry.desc, entry.moves);
+    game_initial_transition(game, &board);
+    do
+    {
+        result = game_play(game, &board);
+        game->score += result;
+
+        // write score and level out
+        riv->outcard_len = riv_snprintf(
+            (char *)riv->outcard, RIV_SIZE_OUTCARD,
+            "JSON{\"score\":%d,\"level\":%d}",
+            game->score,
+            l + 1);
+
+        if (l + 1 >= file->count)
+        {
+            // gone through all levels
+            break;
+        }
+        if (result == 0)
+        {
+            // player ran out of time
+            break;
+        }
+
+        struct Board next = board_create(l + 1, file->entries[l + 1].desc, file->entries[l + 1].moves);
+        game_transition(game, &board, &next, game->score - result, game->score);
+        board = next;
+        l++;
+
+    } while (result > 0);
+    seqt_stop(music);
+    game_over(game, &board);
 }

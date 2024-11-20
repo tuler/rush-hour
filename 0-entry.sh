@@ -1,1 +1,1 @@
-rush levels.txt
+./rush.elf levels.txt

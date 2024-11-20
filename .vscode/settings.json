@@ -34,6 +34,10 @@
     "unordered_map": "cpp",
     "variant": "cpp",
     "vector": "cpp",
-    "__locale": "cpp"
+    "__locale": "cpp",
+    "riv.h": "c",
+    "piece.h": "c",
+    "color.h": "c",
+    "board.h": "c"
   }
 }

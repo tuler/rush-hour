@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "riv.h"
+#include <riv.h>
 
 #ifndef SEQT_API
 #define SEQT_API

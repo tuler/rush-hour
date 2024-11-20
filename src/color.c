@@ -1,3 +1,5 @@
+#include <riv.h>
+
 #include "color.h"
 
 void color_setup()

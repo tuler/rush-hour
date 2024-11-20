@@ -1,65 +1,15 @@
-#pragma once
-#include <vector>
+#ifndef BOARD_H
+#define BOARD_H
+
+#include <riv.h>
+#include <stddef.h>
+
 #include "piece.h"
 
-extern "C"
+#define MAX_PIECES 36
+
+struct Board
 {
-#include "riv.h"
-}
-
-#define RUSH_DRAW_PRIMARY_PIECE 0x01
-#define RUSH_DRAW_PIECES 0x02
-#define RUSH_DRAW_WALLS 0x04
-#define RUSH_DRAW_ENTRY 0x08
-#define RUSH_DRAW_EXIT 0x10
-
-class Board
-{
-public:
-    explicit Board(uint64_t index, std::string desc, uint64_t moves);
-
-    int PieceAt(uint64_t position) const;
-
-    bool IsOccupied(uint64_t position) const;
-
-    bool CanMoveForward(uint64_t index) const;
-
-    bool CanMoveBackward(uint64_t index) const;
-
-    bool CanMove(uint64_t index) const;
-
-    const Piece &PrimaryPiece() const;
-
-    bool SelectNext();
-
-    bool SelectPrevious();
-
-    bool MoveSelectedBackward();
-
-    bool MoveSelectedForward();
-
-    void Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, uint32_t colorOffset, uint16_t flags) const;
-
-    bool Solved() const;
-
-    uint64_t Moves() const
-    {
-        return moves;
-    }
-
-    uint64_t TimePerMove() const
-    {
-        // how many miliseconds we give the player per move
-        // TODO: maybe make this variable to make it harder as player advances
-        return 3000;
-    }
-
-    uint64_t MaxTime() const
-    {
-        return Moves() * TimePerMove();
-    }
-
-private:
     // board level
     uint64_t index;
 
@@ -67,8 +17,26 @@ private:
     uint64_t moves;
 
     // list of pieces on the board (first is the primary)
-    std::vector<Piece> pieces;
+    struct Piece pieces[MAX_PIECES];
+
+    size_t piece_count;
 
     // selected piece
     uint64_t selected;
 };
+
+struct Board board_create(uint64_t index, const char *desc, uint64_t moves);
+
+int board_select_next(struct Board *board);
+
+int board_select_previous(struct Board *board);
+
+int board_move_selected_backward(struct Board *board);
+
+int board_move_selected_forward(struct Board *board);
+
+int board_is_solved(struct Board *board);
+
+uint64_t board_max_time(struct Board *board);
+
+#endif

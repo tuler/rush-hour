@@ -1,28 +1,23 @@
-#pragma once
+#ifndef FILE_H
+#define FILE_H
 
-#include <string>
-#include <vector>
-extern "C"
-{
-#include "riv.h"
-}
+#include <stddef.h>
 
-typedef struct
+struct FileEntry
 {
-    uint64_t moves;
-    std::string desc;
+    int moves;
+    char desc[256];
     int cluster;
-} FileEntry;
-
-class File
-{
-public:
-    explicit File(const std::string &path);
-
-    const FileEntry &operator[](size_t index) const;
-
-    size_t size() const;
-
-private:
-    std::vector<FileEntry> entries;
 };
+
+struct File
+{
+    struct FileEntry *entries;
+    size_t count;
+    size_t capacity;
+};
+
+int file_load(struct File *f, const char *path);
+void file_free(struct File *f);
+
+#endif

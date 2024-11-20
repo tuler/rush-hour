@@ -1,8 +1,4 @@
-#include <stdexcept>
-extern "C"
-{
-#include "riv.h"
-}
+#include <riv.h>
 #define SEQT_IMPL
 
 #include "color.h"
@@ -25,9 +21,18 @@ int main(const int argc, const char **argv)
     // load levels from file
     if (argc < 2)
     {
-        throw std::runtime_error("missing levels file");
+        riv_printf("missing levels file\n");
+        return -1;
     }
-    File levels(argv[1]);
-    Game game = Game(levels);
-    game.Start();
+
+    // load levels file
+    struct File levels;
+    file_load(&levels, argv[1]);
+
+    // Game game = Game(levels);
+    // game.Start();
+    struct Game game = game_create(&levels);
+    game_start(&game);
+
+    file_free(&levels);
 }

@@ -1,34 +1,17 @@
-#pragma once
+#ifndef GAME_H
+#define GAME_H
 
-#include "board.h"
 #include "file.h"
 
-extern "C"
+// Game state struct
+struct Game
 {
-#include "riv.h"
-}
-
-class Game
-{
-public:
-    Game(File &file);
-
-    void Start();
-
-    uint64_t Score() const;
-
-private:
     uint64_t score;
-
-    File &file;
-
-    void Title();
-
-    uint64_t Play(Board &board);
-
-    void Transition(Board &current, Board &next, uint64_t old_score, uint64_t new_score);
-
-    void InitialTransition(Board &next);
-
-    void GameOver(Board &board);
+    struct File *file;
 };
+
+struct Game game_create(struct File *file);
+
+void game_start(struct Game *game);
+
+#endif
