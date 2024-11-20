@@ -9,6 +9,7 @@
 #include "color.h"
 #include "game.h"
 #include "health.h"
+#include "sound.h"
 
 Game::Game(File &file) : file(file)
 {
@@ -119,6 +120,7 @@ void Game::Title()
             riv->keys[RIV_GAMEPAD_SELECT].press ||
             riv->keys[RIV_GAMEPAD_START].press)
         {
+            play_start();
             break;
         }
     } while (riv_present());
@@ -192,11 +194,13 @@ uint64_t Game::Play(Board &board)
             riv->keys[RIV_GAMEPAD_LEFT].press)
         {
             board.MoveSelectedBackward();
+            play_move();
         }
         if (riv->keys[RIV_GAMEPAD_DOWN].press ||
             riv->keys[RIV_GAMEPAD_RIGHT].press)
         {
             board.MoveSelectedForward();
+            play_move();
         }
 
         // clear screen
@@ -275,6 +279,11 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
                                             256 - 16,
                                             1,
                                             RIV_COLOR_BLACK);
+        if (riv->frame % 4 == 0)
+        {
+            play_score();
+        }
+
         // draw timer
         health_draw(32 - 3,
                     256 - 16 - (text_size.height / 2),
@@ -376,6 +385,7 @@ void Game::InitialTransition(Board &next)
 
 void Game::GameOver(Board &board)
 {
+    play_game_over();
     do
     {
         riv_clear(RUSH_COLOR_BACKGROUND);
