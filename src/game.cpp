@@ -33,8 +33,12 @@ void Game::Start()
         result = Play(board);
         score += result;
 
-        // write score out
-        riv->outcard_len = riv_snprintf((char *)riv->outcard, RIV_SIZE_OUTCARD, "JSON{\"score\":%d}", score);
+        // write score and level out
+        riv->outcard_len = riv_snprintf(
+            (char *)riv->outcard, RIV_SIZE_OUTCARD,
+            "JSON{\"score\":%d,\"level\":%d}",
+            score,
+            l + 1);
 
         if (l + 1 >= file.size())
         {
