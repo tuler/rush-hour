@@ -46,7 +46,7 @@ extern "C"
 #define RUSH_COLOR_GRID_LINE 7
 #define RUSH_COLOR_PRIMARY_PIECE 25
 #define RUSH_COLOR_PIECE 19
-#define RUSH_COLOR_PIECE_OUTLINE 0
+#define RUSH_COLOR_PIECE_OUTLINE 7
 #define RUSH_COLOR_LABEL 0
 #define RUSH_COLOR_WALL 6
 
@@ -54,13 +54,3 @@ extern "C"
  * Setup the color palette in RIV.
  */
 void color_setup();
-
-/**
- * Get the color with the given alpha.
- */
-uint32_t color_alpha(uint32_t color, uint32_t base_color, float alpha);
-
-/**
- * Get the black or white color with the given alpha.
- */
-uint32_t color_bw_alpha(float alpha);

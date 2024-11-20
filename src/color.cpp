@@ -46,17 +46,3 @@ void color_setup()
     riv->palette[RUSH_COLOR_YELLOW_4] = 0x2ADFFF;
     riv->palette[RUSH_COLOR_YELLOW_5] = 0x00D8FF;
 }
-
-uint32_t color_alpha(uint32_t color, uint32_t base_color, float alpha)
-{
-    uint32_t base = color - 6;
-    uint32_t c = alpha * 6 + base;
-    return c == base ? base_color : c;
-}
-
-uint32_t color_bw_alpha(float alpha)
-{
-    uint32_t base = RUSH_COLOR_WHITE;
-    uint32_t c = alpha * 8 + base;
-    return c == 8 ? RUSH_COLOR_BLACK : c;
-}
