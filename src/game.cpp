@@ -60,7 +60,7 @@ void Game::Start()
 void Game::Title()
 {
     const int STEPS = riv->width / 6;
-    uint64_t img = riv_make_image("img/rush.png", RUSH_COLOR_WHITE);
+    uint64_t img = riv_make_image("rush.png", RUSH_COLOR_WHITE);
 
     // Ease in-out function using sine
     auto ease = [](float x) -> float
