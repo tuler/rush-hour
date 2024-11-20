@@ -45,14 +45,14 @@ Board::Board(uint64_t index, std::string desc, uint64_t moves) : index(index),
         // XXX: validate positions
         const int stride = ps[1] - ps[0];
         pieces.push_back(Piece(ps[0], ps.size(), stride));
-        riv_printf("piece %c position %02d size %d stride %d\n", label, ps[0], ps.size(), stride);
+        // riv_printf("piece %c position %02d size %d stride %d\n", label, ps[0], ps.size(), stride);
     }
 
     // create walls
     for (const auto &p : positions['x'])
     {
         pieces.push_back(Piece(p, 1, 1));
-        riv_printf("wall position %02d\n", p);
+        // riv_printf("wall position %02d\n", p);
     }
 }
 
