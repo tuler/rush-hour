@@ -54,3 +54,8 @@ extern "C"
  * Setup the color palette in RIV.
  */
 void color_setup();
+
+/**
+ * Draw the color palette in RIV.
+ */
+void color_draw_palette();

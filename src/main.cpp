@@ -5,23 +5,14 @@ extern "C"
 }
 
 #include "color.h"
-#include "config.h"
 #include "file.h"
 #include "game.h"
 
-void draw_palette()
-{
-    for (int i = 0; i < 32; i++)
-    {
-        riv_draw_rect_fill(i * 8, 0, 8, 8, i);
-    }
-}
-
 int main(const int argc, const char **argv)
 {
-    riv->width = SCREEN_WIDTH;
-    riv->height = SCREEN_HEIGHT;
-    riv->target_fps = TARGET_FPS;
+    riv->width = 256;
+    riv->height = 256;
+    riv->target_fps = 60;
 
     // customize palette
     color_setup();

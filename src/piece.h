@@ -1,7 +1,5 @@
 #pragma once
 
-#include "config.h"
-
 extern "C"
 {
 #include "riv.h"
@@ -44,7 +42,7 @@ public:
 
     bool Vertical() const
     {
-        return stride == RUSH_GRID_SIZE;
+        return stride == 6;
     }
 
     // check if piece can move backward (based on its position and board boundaries only)
@@ -58,12 +56,12 @@ public:
     void Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, uint32_t color, bool selected) const;
 
 private:
-    // 0 to (RUSH_GRID_SIZE * RUSH_GRID_SIZE - 1) (35 on 6x6)
+    // 0 to (6 * 6 - 1)
     uint64_t position;
 
     // 2 or 3 (or 1 for wall)
     uint64_t size;
 
-    // 1 for horizontal pieces, RUSH_GRID_SIZE for vertical pieces (6 on 6x6)
+    // 1 for horizontal pieces, 6 for vertical pieces
     uint64_t stride;
 };

@@ -42,9 +42,6 @@ Board::Board(uint64_t index, std::string desc, uint64_t moves) : index(index),
         pieces.push_back(Piece(ps[0], ps.size(), stride));
         riv_printf("piece %c position %02d size %d stride %d\n", label, ps[0], ps.size(), stride);
     }
-
-    // select moveable piece
-    // SelectNext();
 }
 
 int Board::PieceAt(uint64_t position) const
@@ -138,7 +135,7 @@ bool Board::MoveSelectedForward()
 
 void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, uint32_t colorOffset, uint16_t flags) const
 {
-    int64_t cell_height = h / RUSH_GRID_SIZE;
+    int64_t ch = riv->width / 8;
 
     // draw background
     riv_draw_rect_fill(x0 - 2, y0 - 2, w + 2, h + 2, RUSH_COLOR_BOARD);
@@ -148,8 +145,8 @@ void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, uint32_t colorOff
 
     // draw exit
     uint64_t xExit = x0 + w;
-    uint64_t yExit0 = y0 + (cell_height * 2) - 2;
-    uint64_t yExit1 = y0 + (cell_height * 3) - 1;
+    uint64_t yExit0 = y0 + (ch * 2) - 2;
+    uint64_t yExit1 = y0 + (ch * 3) - 1;
     if (flags & RUSH_DRAW_EXIT)
     {
         riv_draw_line(xExit, yExit0, xExit, yExit1, RUSH_COLOR_BACKGROUND);
@@ -190,7 +187,7 @@ bool Board::Solved() const
         Piece primaryPiece = pieces[0];
 
         // calculate exit position
-        uint64_t exitPosition = (RUSH_GRID_SIZE * RUSH_GRID_SIZE / 2 - 2);
+        uint64_t exitPosition = (6 * 6 / 2 - 2);
 
         // check primary piece position
         return primaryPiece.Position() == exitPosition;
