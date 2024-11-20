@@ -17,6 +17,11 @@ File::File(const std::string &path)
     // read file line by line
     while (std::getline(file, line))
     {
+        if (line[0] == '#')
+        {
+            // comment out
+            continue;
+        }
         std::stringstream ss(line);
         FileEntry entry;
 
