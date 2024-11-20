@@ -206,7 +206,8 @@ uint64_t Game::Play(Board &board)
         riv_clear(RUSH_COLOR_BACKGROUND);
 
         // draw board
-        board.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, true, 0, false);
+        board.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, 0,
+                   RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_EXIT);
 
         // draw score
         riv_recti text_size = riv_draw_text(("Score " + std::to_string(score)).c_str(),
@@ -261,8 +262,10 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
         bool drawPrimary = offset < ((int)riv->width - delta * 32);
 
         // Draw boards with interpolated positions
-        current.Draw(32 - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, false, true, 0, false);
-        next.Draw(32 + riv->width - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, !drawPrimary, false, 0, true);
+        current.Draw(32 - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, 0,
+                     RUSH_DRAW_PIECES | RUSH_DRAW_EXIT);
+        next.Draw(32 + riv->width - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, 0,
+                  RUSH_DRAW_EXIT | RUSH_DRAW_ENTRY | (drawPrimary ? 0 : RUSH_DRAW_PRIMARY_PIECE));
 
         // Draw fixed primary piece
         if (drawPrimary)
@@ -296,7 +299,8 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
         riv_clear(RUSH_COLOR_BACKGROUND);
 
         // Draw next board
-        next.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, true, colorOffset, false);
+        next.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, colorOffset,
+                  RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_EXIT);
 
         // draw score
         riv_recti text_size = riv_draw_text(("Score " + std::to_string(new_score)).c_str(),
@@ -342,7 +346,8 @@ void Game::InitialTransition(Board &next)
         int offset = static_cast<int>(smoothProgress * riv->width);
 
         // Draw boards with interpolated positions
-        next.Draw(32 + riv->width - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, false, false, 0, true);
+        next.Draw(32 + riv->width - offset, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, 0,
+                  RUSH_DRAW_EXIT | RUSH_DRAW_ENTRY);
 
         // Draw fixed primary piece
         next.PrimaryPiece().Draw(32 - (256 - offset), 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, RUSH_COLOR_RED_5, true);
@@ -358,7 +363,8 @@ void Game::InitialTransition(Board &next)
         riv_clear(RUSH_COLOR_BACKGROUND);
 
         // Draw next board
-        next.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, true, colorOffset, false);
+        next.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, colorOffset,
+                  RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_EXIT);
 
         // draw score
         riv_draw_text(("Score " + std::to_string(0)).c_str(),
@@ -379,7 +385,8 @@ void Game::GameOver(Board &board)
         riv_clear(RUSH_COLOR_BACKGROUND);
 
         // draw board
-        board.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, true, true, -3, false);
+        board.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, -3,
+                   RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_EXIT);
 
         // draw score
         riv_draw_text(("Score " + std::to_string(Score())).c_str(),

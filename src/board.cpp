@@ -136,7 +136,7 @@ bool Board::MoveSelectedForward()
     return true;
 }
 
-void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryPiece, bool drawPieces, uint32_t colorOffset, bool drawEntry) const
+void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, uint32_t colorOffset, uint16_t flags) const
 {
     int64_t cell_height = h / RUSH_GRID_SIZE;
 
@@ -150,25 +150,26 @@ void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryP
     uint64_t xExit = x0 + w;
     uint64_t yExit0 = y0 + (cell_height * 2) - 2;
     uint64_t yExit1 = y0 + (cell_height * 3) - 1;
-    riv_draw_line(xExit, yExit0, xExit, yExit1, RUSH_COLOR_BACKGROUND);
-    riv_draw_line(xExit, yExit0, xExit + 4, yExit0, RUSH_COLOR_GRID_LINE + colorOffset);
-    riv_draw_line(xExit, yExit1, xExit + 4, yExit1, RUSH_COLOR_GRID_LINE + colorOffset);
+    if (flags & RUSH_DRAW_EXIT)
+    {
+        riv_draw_line(xExit, yExit0, xExit, yExit1, RUSH_COLOR_BACKGROUND);
+        riv_draw_line(xExit, yExit0, xExit + 4, yExit0, RUSH_COLOR_GRID_LINE + colorOffset);
+        riv_draw_line(xExit, yExit1, xExit + 4, yExit1, RUSH_COLOR_GRID_LINE + colorOffset);
+    }
 
     // draw entry
-    if (drawEntry)
+    uint64_t xEntry = x0 - 3;
+    if (flags & RUSH_DRAW_ENTRY)
     {
-        uint64_t xEntry = x0 - 3;
         riv_draw_line(xEntry, yExit0, xEntry, yExit1, RUSH_COLOR_BACKGROUND);
-        // riv_draw_line(xEntry, yExit0, xEntry - 4, yExit0, RUSH_COLOR_GRID_LINE + colorOffset);
-        // riv_draw_line(xEntry, yExit1, xEntry - 4, yExit1, RUSH_COLOR_GRID_LINE + colorOffset);
     }
 
     // draw pieces
-    if (drawPrimaryPiece)
+    if (flags & RUSH_DRAW_PRIMARY_PIECE)
     {
         pieces[0].Draw(x0, y0, w, h, RUSH_COLOR_RED_5 + colorOffset, 0 == selected);
     }
-    if (drawPieces)
+    if (flags & RUSH_DRAW_PIECES)
     {
         for (size_t i = 1; i < pieces.size(); i++)
         {

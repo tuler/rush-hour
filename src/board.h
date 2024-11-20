@@ -7,6 +7,12 @@ extern "C"
 #include "riv.h"
 }
 
+#define RUSH_DRAW_PRIMARY_PIECE 0x01
+#define RUSH_DRAW_PIECES 0x02
+#define RUSH_DRAW_WALLS 0x04
+#define RUSH_DRAW_ENTRY 0x08
+#define RUSH_DRAW_EXIT 0x10
+
 class Board
 {
 public:
@@ -32,7 +38,7 @@ public:
 
     bool MoveSelectedForward();
 
-    void Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, bool drawPrimaryPiece, bool drawPieces, uint32_t colorOffset, bool drawEntry) const;
+    void Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, uint32_t colorOffset, uint16_t flags) const;
 
     bool Solved() const;
 
