@@ -152,9 +152,6 @@ uint64_t Game::Play(Board &board)
     uint64_t start_time = riv->time_ms;
     uint64_t timeout = start_time + max_time;
 
-    // health meter
-    Health health = Health(RUSH_COLOR_GRID_LINE, RUSH_COLOR_PIECE);
-
     do
     {
         uint64_t time_ms = riv->time_ms;
@@ -217,7 +214,7 @@ uint64_t Game::Play(Board &board)
                                             1,
                                             RIV_COLOR_BLACK);
         // draw timer
-        health.Draw(32 - 3,
+        health_draw(32 - 3,
                     256 - 16 - (text_size.height / 2),
                     256 - 64 - text_size.width - 4,
                     text_size.height,
@@ -243,9 +240,6 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
     uint64_t max_time = current.MaxTime();
 
     uint64_t diff_score = new_score - old_score;
-
-    // health meter
-    Health health = Health(RUSH_COLOR_GRID_LINE, RUSH_COLOR_PIECE);
 
     // draw transition from one board to the next
     for (int step = 0; step <= STEPS; step++)
@@ -282,7 +276,7 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
                                             1,
                                             RIV_COLOR_BLACK);
         // draw timer
-        health.Draw(32 - 3,
+        health_draw(32 - 3,
                     256 - 16 - (text_size.height / 2),
                     256 - 64 - text_size.width - 4,
                     text_size.height,
@@ -312,7 +306,7 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
                                             RIV_COLOR_BLACK);
         // draw timer
         float p = (float)(colorOffset + 5) / 5;
-        health.Draw(32 - 3,
+        health_draw(32 - 3,
                     256 - 16 - (text_size.height / 2),
                     256 - 64 - text_size.width - 4,
                     text_size.height,

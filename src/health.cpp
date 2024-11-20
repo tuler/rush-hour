@@ -1,23 +1,12 @@
+#include "color.h"
 #include "health.h"
 
-Health::Health(
-    uint64_t border_color,
-    uint64_t fill_color)
-    : border_color(border_color),
-      fill_color(fill_color)
-{
-}
-
-void Health::Draw(uint64_t x0,
-                  uint64_t y0,
-                  uint64_t width,
-                  uint64_t height,
-                  float percent)
+void health_draw(uint64_t x0, uint64_t y0, uint64_t w, uint64_t h, float percent)
 {
     // draw border
-    riv_draw_rect_line(x0, y0, width, height, border_color);
+    riv_draw_rect_line(x0, y0, w, h, RUSH_COLOR_GRID_LINE);
 
     // draw fill
-    uint64_t fill_width = percent * (width - 2);
-    riv_draw_rect_fill(x0 + 1, y0 + 1, fill_width, height - 2, fill_color);
+    uint64_t fw = percent * (w - 2);
+    riv_draw_rect_fill(x0 + 1, y0 + 1, fw, h - 2, RUSH_COLOR_PIECE);
 }
