@@ -1,0 +1,17 @@
+{
+  "name": "Rush Hour",
+  "summary": "A puzzle game where you have to move cars to get the red car out of the parking lot",
+  "description": "Rush Hour is a sliding block puzzle game originally created by Nob Yoshigahara in the 1970s and published by ThinkFun where you have to move cars to get the red car out of the parking lot. The game is played on a 6x6 grid, where each car takes up 2 or 3 squares. The cars can only move horizontally or vertically, and they can't move through each other. The game has 200 levels of increasing difficulty, and the goal is to solve each level as fast as possible.",
+  "tags": ["puzzle", "strategy", "slide"],
+  "authors": [
+    {
+      "name": "Danilo Tuler",
+      "link": "https://github.com/tuler"
+    }
+  ],
+  "links": [
+    "https://github.com/tuler/rush-hour",
+    "https://dtuler.itch.io/rush-hour",
+    "https://en.wikipedia.org/wiki/Rush_Hour_(puzzle)"
+  ]
+}
