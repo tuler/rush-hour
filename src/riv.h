@@ -442,6 +442,9 @@ typedef enum riv_waveform_type {
   RIV_WAVEFORM_SAWTOOTH,
   RIV_WAVEFORM_NOISE,
   RIV_WAVEFORM_PULSE,
+  RIV_WAVEFORM_ORGAN,
+  RIV_WAVEFORM_TILTED_SAWTOOTH,
+  RIV_NUM_WAVEFORM,
 } riv_waveform_type;
 
 // Sound format for sound buffers
@@ -834,6 +837,8 @@ static riv_context *const riv = (riv_context*)RIV_VADDR_CONTEXT;
 RIV_API riv_context* riv_get_context(void);
 // Present current frame, returns true until quit is requested.
 RIV_API bool riv_present(void);
+// Check if a key was pressed or continues to be pressed at repeat rate.
+RIV_API bool riv_is_key_repeat_press(uint8_t key, uint64_t repeat_delay, uint64_t repeat_rate);
 
 ////////////////////////////////////////
 // Resources
@@ -848,6 +853,10 @@ RIV_API void riv_destroy_image(uint64_t img_id);
 RIV_API uint64_t riv_make_spritesheet(uint64_t img_id, uint32_t w, uint32_t h);
 // Destroy an sprite sheet
 RIV_API void riv_destroy_spritesheet(uint64_t sps_id);
+// Get bounding box from an image region
+RIV_API riv_recti riv_get_image_bbox(uint64_t img_id, int64_t sx0, int64_t sy0, int64_t w, int64_t h);
+// Get bounding box from a sprite
+RIV_API riv_recti riv_get_sprite_bbox(uint32_t n, uint64_t sps_id, int64_t nx, int64_t ny);
 
 ////////////////////////////////////////
 // Drawing
@@ -886,9 +895,9 @@ RIV_API void riv_draw_triangle_line(int64_t x0, int64_t y0, int64_t x1, int64_t 
 RIV_API void riv_draw_image_rect(uint64_t img_id, int64_t x0, int64_t y0, int64_t w, int64_t h, int64_t sx0, int64_t sy0, int64_t mw, int64_t mh);
 // Draw fill of a rectangle copied from a sprite sheet
 RIV_API void riv_draw_sprite(uint32_t n, uint64_t sps_id, int64_t x0, int64_t y0, int64_t nw, int64_t nh, int64_t mw, int64_t mh);
-// Draw text determined by its sprite sheet, anchor point, size and returns its size
+// Draw text determined by its sprite sheet, anchor point, size and returns its bounding box
 RIV_API riv_recti riv_draw_text(const char* text, uint64_t sps_id, riv_align anchor, int64_t x, int64_t y, int64_t size, int64_t col);
-// Draw text determined by its sprite sheet, anchor point, size, scale, spacing and returns its size
+// Draw text determined by its sprite sheet, anchor point, size, scale, spacing and returns its bounding box
 RIV_API riv_recti riv_draw_text_ex(const char* text, uint64_t sps_id, riv_align anchor, int64_t x, int64_t y, int64_t mw, int64_t mh, int64_t sx, int64_t sy, int64_t col);
 
 ////////////////////////////////////////
@@ -926,9 +935,33 @@ RIV_API uint64_t riv_printf(const char* format, ...);
 RIV_API char *riv_tprintf(const char* format, ...);
 // Format a string
 RIV_API uint64_t riv_snprintf(char* buf, uint64_t n, const char* format, ...);
+// Abort immediately with an optional fatal error message
+RIV_API void riv_panic(const char* msg);
 // Get the RIV version at runtime
 RIV_API uint64_t riv_version(void);
 // Get the current machine cycle, THIS IS NON REPRODUCIBLE, use for bench-marking only
 RIV_API uint64_t riv_rdcycle(void);
+
+////////////////////////////////////////
+// Low level memory management (used by high level language bindings)
+
+// Read up to 8 bytes from memory address
+RIV_API uint64_t riv_mempeek(uint64_t addr, uint64_t size);
+// Write up to 8 bytes to memory address
+RIV_API void riv_mempoke(uint64_t addr, uint64_t value, uint64_t size);
+// Fill memory region with a constant byte
+RIV_API void riv_memset(uint64_t addr, uint8_t value, uint64_t size);
+// Copy bytes from memory a region source to another memory region, the region may overlap
+RIV_API void riv_memmove(uint64_t dest_addr, uint64_t src_addr, uint64_t size);
+// Scan memory region for a byte and return the address for the matching byte
+RIV_API uint64_t riv_memscan(uint64_t addr, uint8_t value, uint64_t size);
+// Compare memory areas, returns zero if they are equal
+RIV_API int32_t riv_memcmp(uint64_t addr1, uint64_t addr2, uint64_t size);
+// Allocate memory region and return its starting address
+RIV_API uint64_t riv_memalloc(uint64_t size);
+// Reallocate memory region to a new size
+RIV_API uint64_t riv_memrealloc(uint64_t addr, uint64_t new_size, uint64_t old_size);
+// Deallocate memory from starting address
+RIV_API void riv_memdealloc(uint64_t addr);
 
 #endif

@@ -9,6 +9,7 @@
 #include "color.h"
 #include "game.h"
 #include "health.h"
+#include "seqt.h"
 #include "sound.h"
 
 Game::Game(File &file) : file(file)
@@ -18,6 +19,8 @@ Game::Game(File &file) : file(file)
 
 void Game::Start()
 {
+    uint64_t music = seqt_play(seqt_make_source_from_file("songs/01.seqt.rivcard"), -1);
+
     // title screen
     Title();
 
@@ -50,6 +53,7 @@ void Game::Start()
         l++;
 
     } while (result > 0);
+    seqt_stop(music);
     GameOver(board);
 }
 
@@ -87,6 +91,7 @@ void Game::Title()
         riv_draw_line(0, interpolate(256 + 1, 256 - 73, smoothProgress), 256, interpolate(256 + 1, 256 - 73, smoothProgress), RUSH_COLOR_WHITE);
 
         riv_present();
+        seqt_poll();
     }
 
     do
@@ -123,6 +128,7 @@ void Game::Title()
             play_start();
             break;
         }
+        seqt_poll();
     } while (riv_present());
 
     for (int step = 0; step <= STEPS; step++)
@@ -142,6 +148,7 @@ void Game::Title()
         riv_draw_line(0, interpolate(72, -2, smoothProgress), 256, interpolate(72, -2, smoothProgress), RUSH_COLOR_WHITE);
         riv_draw_line(0, interpolate(256 - 73, 256 + 1, smoothProgress), 256, interpolate(256 - 73, 256 + 1, smoothProgress), RUSH_COLOR_WHITE);
 
+        seqt_poll();
         riv_present();
     }
 }
@@ -224,6 +231,7 @@ uint64_t Game::Play(Board &board)
                     text_size.height,
                     (float)time_left / max_time);
 
+        seqt_poll();
     } while (riv_present());
     return 0;
 }
@@ -292,6 +300,7 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
                     (float)diff_score / max_time - (smoothProgress * diff_score / max_time));
 
         // present
+        seqt_poll();
         riv_present();
     }
 
@@ -322,6 +331,7 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
                     p);
 
         // present
+        seqt_poll();
         riv_present();
     }
 }
@@ -357,6 +367,7 @@ void Game::InitialTransition(Board &next)
         next.PrimaryPiece().Draw(32 - (256 - offset), 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_5, true);
 
         // present
+        seqt_poll();
         riv_present();
     }
 
@@ -379,6 +390,7 @@ void Game::InitialTransition(Board &next)
                       1,
                       RIV_COLOR_BLACK);
         // present
+        seqt_poll();
         riv_present();
     }
 }
@@ -411,6 +423,7 @@ void Game::GameOver(Board &board)
                       1,
                       RIV_COLOR_BLACK);
 
+        seqt_poll();
     } while (riv_present());
 }
 

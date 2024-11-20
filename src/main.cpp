@@ -3,10 +3,12 @@ extern "C"
 {
 #include "riv.h"
 }
+#define SEQT_IMPL
 
 #include "color.h"
 #include "file.h"
 #include "game.h"
+#include "seqt.h"
 
 int main(const int argc, const char **argv)
 {
@@ -16,6 +18,9 @@ int main(const int argc, const char **argv)
 
     // customize palette
     color_setup();
+
+    // initialize music
+    seqt_init();
 
     // load levels from file
     if (argc < 2)
