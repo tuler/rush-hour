@@ -301,6 +301,7 @@ void Game::Transition(Board &current, Board &next, uint64_t old_score, uint64_t 
         // Draw next board
         next.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, colorOffset,
                   RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_EXIT);
+        next.PrimaryPiece().Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, RUSH_COLOR_RED_5, true);
 
         // draw score
         riv_recti text_size = riv_draw_text(("Score " + std::to_string(new_score)).c_str(),
@@ -365,6 +366,7 @@ void Game::InitialTransition(Board &next)
         // Draw next board
         next.Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, colorOffset,
                   RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_EXIT);
+        next.PrimaryPiece().Draw(32, 32, RUSH_GRID_SIZE * 32, RUSH_GRID_SIZE * 32, RUSH_COLOR_RED_5, true);
 
         // draw score
         riv_draw_text(("Score " + std::to_string(0)).c_str(),

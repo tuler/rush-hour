@@ -144,7 +144,7 @@ void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, uint32_t colorOff
     riv_draw_rect_fill(x0 - 2, y0 - 2, w + 2, h + 2, RUSH_COLOR_BOARD);
 
     // draw border
-    riv_draw_rect_line(x0 - 3, y0 - 3, w + 4, h + 4, RUSH_COLOR_GRID_LINE + colorOffset);
+    riv_draw_rect_line(x0 - 3, y0 - 3, w + 4, h + 4, RUSH_COLOR_GRID_LINE);
 
     // draw exit
     uint64_t xExit = x0 + w;
@@ -153,8 +153,8 @@ void Board::Draw(int64_t x0, int64_t y0, int64_t w, int64_t h, uint32_t colorOff
     if (flags & RUSH_DRAW_EXIT)
     {
         riv_draw_line(xExit, yExit0, xExit, yExit1, RUSH_COLOR_BACKGROUND);
-        riv_draw_line(xExit, yExit0, xExit + 4, yExit0, RUSH_COLOR_GRID_LINE + colorOffset);
-        riv_draw_line(xExit, yExit1, xExit + 4, yExit1, RUSH_COLOR_GRID_LINE + colorOffset);
+        riv_draw_line(xExit, yExit0, xExit + 4, yExit0, RUSH_COLOR_GRID_LINE);
+        riv_draw_line(xExit, yExit1, xExit + 4, yExit1, RUSH_COLOR_GRID_LINE);
     }
 
     // draw entry
