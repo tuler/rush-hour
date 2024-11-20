@@ -1,1 +1,1 @@
-rush data/rush.txt
+rush levels.txt
