@@ -2,3 +2,4 @@ build/
 rush
 .levels.txt
 .no_wall.txt
+*.sqfs
