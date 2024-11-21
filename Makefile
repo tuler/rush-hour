@@ -49,7 +49,7 @@ run: $(NAME).sqfs
 	$(RIVEMU_RUN) $<
 
 dev-run: $(NAME).elf
-	$(RIVEMU_RUN) -no-loading -bench -workspace -exec ./0-entry.sh
+	$(RIVEMU_RUN) -no-loading -bench -workspace -exec $(NAME).elf
 
 clean:
 	rm -rf *.sqfs *.elf
@@ -57,7 +57,7 @@ clean:
 distclean: clean
 	rm -rf libriv
 
-$(NAME).sqfs: $(NAME).elf *.png *.rivcard *.txt *.sh info.json
+$(NAME).sqfs: $(NAME).elf *.png *.rivcard *.txt info.json
 	$(RIVEMU_EXEC) riv-mksqfs $^ $@ -comp $(COMP)
 
 $(NAME).elf: $(SRC) libriv
@@ -69,4 +69,3 @@ libriv:
 	$(RIVEMU_EXEC) cp /usr/include/riv.h libriv/
 	$(RIVEMU_EXEC) cp /usr/lib/libriv.so libriv/
 	$(RIVEMU_EXEC) cp /lib/libc.musl-riscv64.so.1 libriv/
-

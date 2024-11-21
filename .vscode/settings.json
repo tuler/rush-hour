@@ -38,6 +38,7 @@
     "riv.h": "c",
     "piece.h": "c",
     "color.h": "c",
-    "board.h": "c"
+    "board.h": "c",
+    "getopt.h": "c"
   }
 }

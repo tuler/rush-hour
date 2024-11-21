@@ -2,6 +2,7 @@
 #define FILE_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 struct FileEntry
 {
@@ -17,7 +18,8 @@ struct File
     size_t capacity;
 };
 
-int file_load(struct File *f, const char *path);
+int file_load(struct File *f, const char *path, uint64_t skip);
+
 void file_free(struct File *f);
 
 #endif

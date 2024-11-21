@@ -38,7 +38,7 @@ int file_add_entry(struct File *f, struct FileEntry *entry)
     return 0;
 }
 
-int file_load(struct File *f, const char *path)
+int file_load(struct File *f, const char *path, uint64_t skip)
 {
     FILE *fp = fopen(path, "r");
     if (!fp)
@@ -58,6 +58,13 @@ int file_load(struct File *f, const char *path)
         // Skip comments
         if (line[0] == '#')
             continue;
+
+        // Skip lines
+        if (skip > 0)
+        {
+            skip--;
+            continue;
+        }
 
         // Parse line
         if (sscanf(line, "%d %255s %d",

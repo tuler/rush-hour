@@ -19,9 +19,12 @@ int64_t interpolate(int64_t a, int64_t b, float t)
     return a + (b - a) * t;
 }
 
-struct Game game_create(struct File *file)
+struct Game game_create(struct File *file, uint64_t time_per_move)
 {
-    struct Game g = {.score = 0, .file = file};
+    struct Game g = {
+        .score = 0,
+        .file = file,
+        .time_per_move = time_per_move};
     return g;
 }
 
@@ -122,7 +125,7 @@ void game_title(struct Game *game)
 uint64_t game_play(struct Game *game, struct Board *board)
 {
     // how much time we give the player to complete the level
-    uint64_t max_time = board_max_time(board);
+    uint64_t max_time = game->time_per_move * board->moves;
 
     uint64_t start_time = riv->time_ms;
     uint64_t timeout = start_time + max_time;
@@ -206,7 +209,7 @@ void game_transition(struct Game *game, struct Board *current, struct Board *nex
     const int STEPS = riv->width / 4;
 
     // how much time we give the player to complete the level
-    uint64_t max_time = board_max_time(current);
+    uint64_t max_time = game->time_per_move * current->moves;
 
     uint64_t diff_score = new_score - old_score;
 

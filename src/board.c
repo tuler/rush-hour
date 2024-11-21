@@ -154,15 +154,3 @@ int board_is_solved(struct Board *board)
     }
     return false;
 }
-
-uint64_t board_time_per_move(struct Board *board)
-{
-    // how many miliseconds we give the player per move
-    // TODO: maybe make this variable to make it harder as player advances
-    return 3000;
-}
-
-uint64_t board_max_time(struct Board *board)
-{
-    return board->moves * board_time_per_move(board);
-}

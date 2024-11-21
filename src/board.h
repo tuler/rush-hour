@@ -37,6 +37,4 @@ int board_move_selected_forward(struct Board *board);
 
 int board_is_solved(struct Board *board);
 
-uint64_t board_max_time(struct Board *board);
-
 #endif

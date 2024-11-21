@@ -7,9 +7,10 @@ struct Game
 {
     uint64_t score;
     struct File *file;
+    uint64_t time_per_move;
 };
 
-struct Game game_create(struct File *file);
+struct Game game_create(struct File *file, uint64_t time_per_move);
 
 void game_start(struct Game *game);
 

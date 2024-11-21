@@ -1,4 +1,8 @@
+#include <getopt.h>
 #include <riv.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 #define SEQT_IMPL
 
 #include "color.h"
@@ -6,7 +10,49 @@
 #include "game.h"
 #include "seqt.h"
 
-int main(const int argc, const char **argv)
+struct Options
+{
+    uint64_t time_per_move; // how many miliseconds per move based on puzzle optimal number of moves
+    uint64_t level;         // number of the level to start (0-based)
+    const char *file;       // levels file to load
+};
+
+static struct option long_options[] = {
+    {"time-per-move", required_argument, 0, 't'},
+    {"level", required_argument, 0, 'l'},
+    {"file", required_argument, 0, 'f'},
+    {0, 0, 0, 0}};
+
+struct Options parse_args(int argc, char **argv)
+{
+    struct Options opts = {
+        .time_per_move = 3000, // default 3000ms
+        .level = 0,
+        .file = "levels.txt"};
+
+    int opt;
+    while ((opt = getopt_long(argc, (char *const *)argv, "t:l:f:", long_options, NULL)) != -1)
+    {
+        switch (opt)
+        {
+        case 't':
+            opts.time_per_move = atoi(optarg);
+            break;
+        case 'l':
+            opts.level = atoi(optarg);
+            break;
+        case 'f':
+            opts.file = optarg;
+            break;
+        default:
+            fprintf(stderr, "Usage: %s [--time-per-move ms] [--level n] [--file path]\n", argv[0]);
+            exit(1);
+        }
+    }
+    return opts;
+}
+
+int main(int argc, char *argv[])
 {
     riv->width = 256;
     riv->height = 256;
@@ -18,21 +64,17 @@ int main(const int argc, const char **argv)
     // initialize music
     seqt_init();
 
-    // load levels from file
-    if (argc < 2)
-    {
-        riv_printf("missing levels file\n");
-        return -1;
-    }
+    // parse options
+    struct Options opts = parse_args(argc, argv);
 
     // load levels file
     struct File levels;
-    file_load(&levels, argv[1]);
+    file_load(&levels, opts.file, opts.level);
 
-    // Game game = Game(levels);
-    // game.Start();
-    struct Game game = game_create(&levels);
+    // create and start the game
+    struct Game game = game_create(&levels, opts.time_per_move);
     game_start(&game);
 
+    // free up dynamic allocated resources
     file_free(&levels);
 }
