@@ -1,7 +1,7 @@
 NAME=rush
 COMP=xz
 RIVEMU_RUN=rivemu
-RIVEMU_EXEC=rivemu -quiet -no-window -sdk -workspace -exec
+RIVEMU_EXEC=rivemu -no-window -sdk -workspace -exec
 
 SRC = $(wildcard src/*.c)
 
