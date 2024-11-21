@@ -326,6 +326,9 @@ void game_initial_transition(struct Game *game, struct Board *next)
 
 void game_over(struct Game *game, struct Board *board)
 {
+    // quit after 3 seconds
+    riv->quit_frame = riv->frame + riv->target_fps * 3;
+
     sfx_game_over();
     do
     {
@@ -347,6 +350,7 @@ void game_over(struct Game *game, struct Board *board)
                       RIV_COLOR_BLACK);
 
         seqt_poll();
+
     } while (riv_present());
 }
 
