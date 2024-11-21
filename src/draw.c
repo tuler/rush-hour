@@ -38,7 +38,7 @@ void draw_piece(const struct Piece *p, int64_t x0, int64_t y0, int64_t w, int64_
     int64_t py1 = (i1 / 6) * ch;
     int64_t pw = px1 - px0 + cw - padding;
     int64_t ph = py1 - py0 + ch - padding;
-    riv_draw_rect_fill(x0 + px0, y0 + py0, pw, ph, color);
+    riv_draw_rect_fill(x0 + px0, y0 + py0, pw, ph, selected ? color + 1 : color);
 
     if (piece_is_fixed(p))
     {
@@ -88,18 +88,18 @@ void draw_board(const struct Board *b, int64_t x0, int64_t y0, int64_t w, int64_
     // draw pieces
     if (flags & RUSH_DRAW_PRIMARY_PIECE)
     {
-        draw_piece(&b->pieces[0], x0, y0, w, h, RUSH_COLOR_RED_5 + colorOffset, 0 == b->selected);
+        draw_piece(&b->pieces[0], x0, y0, w, h, RUSH_COLOR_RED_4 + colorOffset, 0 == b->selected);
     }
     for (size_t i = 1; i < b->piece_count; i++)
     {
         const struct Piece *p = &b->pieces[i];
         if (piece_is_fixed(p) && (flags & RUSH_DRAW_WALLS))
         {
-            draw_piece(p, x0, y0, w, h, RUSH_COLOR_GREY_5 + colorOffset, i == b->selected);
+            draw_piece(p, x0, y0, w, h, RUSH_COLOR_GREY_4 + colorOffset, i == b->selected);
         }
         else if (flags & RUSH_DRAW_PIECES)
         {
-            draw_piece(p, x0, y0, w, h, RUSH_COLOR_TEAL_5 + colorOffset, i == b->selected);
+            draw_piece(p, x0, y0, w, h, RUSH_COLOR_TEAL_4 + colorOffset, i == b->selected);
         }
     }
 
