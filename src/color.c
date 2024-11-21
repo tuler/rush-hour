@@ -48,11 +48,3 @@ void color_setup()
     riv->palette[RUSH_COLOR_YELLOW_4] = 0x2ADFFF;
     riv->palette[RUSH_COLOR_YELLOW_5] = 0x00D8FF;
 }
-
-void color_draw_palette()
-{
-    for (int i = 0; i < 32; i++)
-    {
-        riv_draw_rect_fill(i * 8, 0, 8, 8, i);
-    }
-}

@@ -42,20 +42,12 @@
 #define RUSH_COLOR_BACKGROUND 1
 #define RUSH_COLOR_BOARD 13
 #define RUSH_COLOR_GRID_LINE 7
-#define RUSH_COLOR_PRIMARY_PIECE 25
 #define RUSH_COLOR_PIECE 19
 #define RUSH_COLOR_PIECE_OUTLINE 7
-#define RUSH_COLOR_LABEL 0
-#define RUSH_COLOR_WALL 6
 
 /**
  * Setup the color palette in RIV.
  */
 void color_setup();
-
-/**
- * Draw the color palette in RIV.
- */
-void color_draw_palette();
 
 #endif

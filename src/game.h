@@ -3,7 +3,6 @@
 
 #include "file.h"
 
-// Game state struct
 struct Game
 {
     uint64_t score;

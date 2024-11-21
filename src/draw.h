@@ -12,12 +12,14 @@
 #define RUSH_DRAW_ENTRY 0x08
 #define RUSH_DRAW_EXIT 0x10
 
+void draw_palette();
+
 void draw_health(uint64_t x0, uint64_t y0, uint64_t w, uint64_t h, float percent);
 
 void draw_piece(const struct Piece *p, int64_t x0, int64_t y0, int64_t w, int64_t h, uint32_t color, int selected);
 
 void draw_board(const struct Board *b, int64_t x0, int64_t y0, int64_t w, int64_t h, uint32_t colorOffset, uint16_t flags);
 
-riv_recti draw_score(uint64_t x0, uint64_t y0, uint64_t score);
+riv_recti draw_score(int64_t x0, int64_t y0, uint64_t score);
 
 #endif

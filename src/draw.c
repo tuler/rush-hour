@@ -6,6 +6,14 @@
 #include "draw.h"
 #include "piece.h"
 
+void draw_palette()
+{
+    for (int i = 0; i < 32; i++)
+    {
+        riv_draw_rect_fill(i * 8, 0, 8, 8, i);
+    }
+}
+
 void draw_health(uint64_t x0, uint64_t y0, uint64_t w, uint64_t h, float percent)
 {
     // draw border
@@ -101,7 +109,7 @@ void draw_board(const struct Board *b, int64_t x0, int64_t y0, int64_t w, int64_
     riv_draw_text(title, RIV_SPRITESHEET_FONT_5X7, RIV_CENTER, x0 + w / 2, y0 - 16, 1, RIV_COLOR_BLACK);
 }
 
-riv_recti draw_score(uint64_t x0, uint64_t y0, uint64_t score)
+riv_recti draw_score(int64_t x0, int64_t y0, uint64_t score)
 {
     char text[256];
     snprintf(text, 256, "Score %lu", score);
