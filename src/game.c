@@ -25,6 +25,15 @@ struct Game game_create(struct File *file)
     return g;
 }
 
+void game_write_score(uint64_t score, uint64_t level)
+{
+    riv->outcard_len = riv_snprintf(
+        (char *)riv->outcard, RIV_SIZE_OUTCARD,
+        "JSON{\"score\":%d,\"level\":%d}",
+        score,
+        level);
+}
+
 void game_title(struct Game *game)
 {
     const int STEPS = riv->width / 6;
@@ -359,6 +368,7 @@ void game_start(struct Game *game)
     uint64_t music = seqt_play(seqt_make_source_from_file("music.rivcard"), -1);
 
     // title screen
+    game_write_score(0, 0);
     game_title(game);
 
     uint64_t l = 0; // level
@@ -374,11 +384,7 @@ void game_start(struct Game *game)
         game->score += result;
 
         // write score and level out
-        riv->outcard_len = riv_snprintf(
-            (char *)riv->outcard, RIV_SIZE_OUTCARD,
-            "JSON{\"score\":%d,\"level\":%d}",
-            game->score,
-            l + 1);
+        game_write_score(game->score, l + 1);
 
         if (l + 1 >= file->count)
         {

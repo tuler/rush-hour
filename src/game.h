@@ -13,4 +13,6 @@ struct Game game_create(struct File *file);
 
 void game_start(struct Game *game);
 
+void game_write_score(uint64_t score, uint64_t level);
+
 #endif
