@@ -1,6 +1,8 @@
 # Rush Hour
 
-Rush Hour is a sliding block puzzle game originally created by [Nob Yoshigahara](https://en.wikipedia.org/wiki/Nob_Yoshigahara) in the 1970s and published by ThinkFun.
+![cover](./cover.png)
+
+[Rush Hour](<https://en.wikipedia.org/wiki/Rush_Hour_(puzzle)>) is a sliding block puzzle game originally created by [Nob Yoshigahara](https://en.wikipedia.org/wiki/Nob_Yoshigahara) in the 1970s and published by ThinkFun.
 
 The goal is to move cars to get the red car out of the parking lot.
 The game is played on a 6x6 grid, where each car takes up 2 or 3 squares.
@@ -44,7 +46,8 @@ The levels are loaded from a file (or from the incard). The file has one puzzle 
 03 ooCoooooCoooAACoooBBBooooooooooooooo 23
 ```
 
-This defines a puzzle that can be solved in 3 moves, with the following board configuration. The last number can be ignored.
+This defines a puzzle that can be solved in 3 moves, with the following board configuration, where 'A' is always the red car.
+The board can also contains walls, represented by the 'x' character.
 
 ```
 o o C o o o
@@ -60,6 +63,8 @@ The cartridge is bundled with a default [levels.txt](./levels.txt), but in case 
 ```
 --file <file>
 ```
+
+The cartridge also accepts a RIVES incard containing the levels to be played, in the same format as the [levels.txt](./levels.txt) file.
 
 The first level to be played can also be passed as an argument:
 
