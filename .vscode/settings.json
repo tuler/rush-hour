@@ -39,6 +39,8 @@
     "piece.h": "c",
     "color.h": "c",
     "board.h": "c",
-    "getopt.h": "c"
+    "getopt.h": "c",
+    "level.h": "c",
+    "game.h": "c"
   }
 }

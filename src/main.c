@@ -6,8 +6,8 @@
 #define SEQT_IMPL
 
 #include "color.h"
-#include "file.h"
 #include "game.h"
+#include "level.h"
 #include "seqt.h"
 
 struct Options
@@ -67,14 +67,23 @@ int main(int argc, char *argv[])
     // parse options
     struct Options opts = parse_args(argc, argv);
 
+    riv_printf("incard_len: %lu\n", riv->incard_len);
+
     // load levels file
-    struct File levels;
-    file_load(&levels, opts.file, opts.level);
+    struct Levels levels;
+    if (riv->incard_len > 0)
+    {
+        level_load_incard(&levels, opts.level);
+    }
+    else
+    {
+        level_load_file(&levels, opts.file, opts.level);
+    }
 
     // create and start the game
     struct Game game = game_create(&levels, opts.time_per_move);
     game_start(&game);
 
     // free up dynamic allocated resources
-    file_free(&levels);
+    level_free(&levels);
 }

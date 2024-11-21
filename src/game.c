@@ -3,8 +3,8 @@
 #include "board.h"
 #include "color.h"
 #include "draw.h"
-#include "file.h"
 #include "game.h"
+#include "level.h"
 #include "seqt.h"
 #include "sfx.h"
 
@@ -19,11 +19,11 @@ int64_t interpolate(int64_t a, int64_t b, float t)
     return a + (b - a) * t;
 }
 
-struct Game game_create(struct File *file, uint64_t time_per_move)
+struct Game game_create(struct Levels *levels, uint64_t time_per_move)
 {
     struct Game g = {
         .score = 0,
-        .file = file,
+        .levels = levels,
         .time_per_move = time_per_move};
     return g;
 }
@@ -377,8 +377,8 @@ void game_start(struct Game *game)
     uint64_t l = 0; // level
     uint64_t result = 0;
 
-    struct File *file = game->file;
-    struct FileEntry entry = file->entries[l];
+    struct Levels *levels = game->levels;
+    struct Level entry = levels->entries[l];
     struct Board board = board_create(l, entry.desc, entry.moves);
     game_initial_transition(game, &board);
     do
@@ -389,7 +389,7 @@ void game_start(struct Game *game)
         // write score and level out
         game_write_score(game->score, l + 1);
 
-        if (l + 1 >= file->count)
+        if (l + 1 >= levels->count)
         {
             // gone through all levels
             break;
@@ -400,7 +400,7 @@ void game_start(struct Game *game)
             break;
         }
 
-        struct Board next = board_create(l + 1, file->entries[l + 1].desc, file->entries[l + 1].moves);
+        struct Board next = board_create(l + 1, levels->entries[l + 1].desc, levels->entries[l + 1].moves);
         game_transition(game, &board, &next, game->score - result, game->score);
         board = next;
         l++;

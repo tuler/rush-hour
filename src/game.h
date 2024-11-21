@@ -1,16 +1,16 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "file.h"
+#include "level.h"
 
 struct Game
 {
     uint64_t score;
-    struct File *file;
+    struct Levels *levels;
     uint64_t time_per_move;
 };
 
-struct Game game_create(struct File *file, uint64_t time_per_move);
+struct Game game_create(struct Levels *levels, uint64_t time_per_move);
 
 void game_start(struct Game *game);
 
