@@ -67,8 +67,6 @@ int main(int argc, char *argv[])
     // parse options
     struct Options opts = parse_args(argc, argv);
 
-    riv_printf("incard_len: %lu\n", riv->incard_len);
-
     // load levels file
     struct Levels levels;
     if (riv->incard_len > 0)
