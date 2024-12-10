@@ -58,6 +58,17 @@ void draw_piece(const struct Piece *p, int64_t x0, int64_t y0, int64_t w, int64_
     }
 }
 
+riv_recti draw_title(int64_t x0, int64_t y0, int64_t w, uint64_t level)
+{
+    char title[256];
+    char l[256];
+    snprintf(title, 256, "Level %lu", level);
+    snprintf(l, 256, "%lu", level);
+    riv_recti r = riv_draw_text(title, RIV_SPRITESHEET_FONT_5X7, RIV_CENTER, x0 + w / 2, y0 - 16, 1, RUSH_COLOR_GRID_LINE);
+    riv_draw_text(l, RIV_SPRITESHEET_FONT_5X7, RIV_TOPRIGHT, r.x + r.width - 1, r.y, 1, RUSH_COLOR_BLACK);
+    return r;
+}
+
 void draw_board(const struct Board *b, int64_t x0, int64_t y0, int64_t w, int64_t h, uint32_t colorOffset, uint16_t flags)
 {
     int64_t ch = riv->width / 8;
@@ -107,14 +118,15 @@ void draw_board(const struct Board *b, int64_t x0, int64_t y0, int64_t w, int64_
     }
 
     // draw title
-    char title[256];
-    snprintf(title, 256, "Level %lu", b->index + 1);
-    riv_draw_text(title, RIV_SPRITESHEET_FONT_5X7, RIV_CENTER, x0 + w / 2, y0 - 16, 1, RIV_COLOR_BLACK);
+    draw_title(x0, y0, w, b->index + 1);
 }
 
 riv_recti draw_score(int64_t x0, int64_t y0, uint64_t score)
 {
     char text[256];
-    snprintf(text, 256, "Score %lu", score);
-    return riv_draw_text(text, RIV_SPRITESHEET_FONT_5X7, RIV_RIGHT, x0, y0, 1, RIV_COLOR_BLACK);
+    snprintf(text, 256, "%lu", score);
+    riv_recti rn = riv_draw_text(text, RIV_SPRITESHEET_FONT_5X7, RIV_RIGHT, x0, y0, 1, RUSH_COLOR_BLACK);
+    riv_recti rs = riv_draw_text("Score ", RIV_SPRITESHEET_FONT_5X7, RIV_RIGHT, x0 - rn.width, y0, 1, RUSH_COLOR_GRID_LINE);
+    riv_recti r = {.x = x0 - (rn.width + rs.width), .y = y0, .width = rn.width + rs.width, .height = rn.height};
+    return r;
 }
