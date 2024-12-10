@@ -21,8 +21,14 @@ struct Board
 
     size_t piece_count;
 
-    // selected piece
-    uint64_t selected;
+    // moveable pieces
+    uint64_t moveable_pieces[MAX_PIECES];
+
+    // number of moveable pieces
+    size_t moveable_count;
+
+    // selected piece, index in moveable_pieces array, -1 if none is selected
+    int64_t selected;
 };
 
 struct Board board_create(uint64_t index, const char *desc, uint64_t moves);
@@ -31,12 +37,12 @@ int board_can_move(const struct Board *board, uint64_t index);
 
 int board_select_next(struct Board *board);
 
-int board_select_previous(struct Board *board);
-
 int board_move_selected_backward(struct Board *board);
 
 int board_move_selected_forward(struct Board *board);
 
-int board_is_solved(struct Board *board);
+int board_is_solved(const struct Board *board);
+
+int board_select_diff(const struct Board *board, uint64_t index);
 
 #endif

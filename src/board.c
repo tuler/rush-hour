@@ -4,13 +4,39 @@
 #include "color.h"
 #include "piece.h"
 
+int board_reset_moveable(struct Board *board)
+{
+    // preserve selected piece
+    int64_t selected = board->selected >= 0 ? board->moveable_pieces[board->selected] : -1;
+
+    board->moveable_count = 0;
+    for (size_t i = 0; i < board->piece_count; i++)
+    {
+        if (board_can_move(board, i))
+        {
+            board->moveable_pieces[board->moveable_count] = i;
+            if (i == selected) // selected will always be moveable
+            {
+                board->selected = board->moveable_count;
+            }
+            board->moveable_count++;
+        }
+    }
+    if (board->selected < 0)
+    {
+        board->selected = 0;
+    }
+    return board->moveable_count;
+}
+
 struct Board board_create(uint64_t index, const char *desc, uint64_t moves)
 {
     struct Board b = {
         .index = index,
         .moves = moves,
         .piece_count = 0,
-        .selected = 0};
+        .moveable_count = 0,
+        .selected = -1};
 
     int count[36] = {0};   // number of positions of each label
     int positions[36][36]; // positions of each label
@@ -46,6 +72,7 @@ struct Board board_create(uint64_t index, const char *desc, uint64_t moves)
         }
         // XXX: validate positions
     }
+    board_reset_moveable(&b);
 
     return b;
 }
@@ -97,54 +124,46 @@ int board_can_move(const struct Board *board, uint64_t index)
 
 int board_select_next(struct Board *board)
 {
-    uint64_t s = board->selected;
-    do
-    {
-        s = (s + 1) % board->piece_count;
-    } while (s != board->selected && !board_can_move(board, s));
-    board->selected = s;
-    return 1;
-}
-
-int board_select_previous(struct Board *board)
-{
-    uint64_t s = board->selected;
-    do
-    {
-        s = (s - 1 + board->piece_count) % board->piece_count;
-    } while (s != board->selected && !board_can_move(board, s));
-    board->selected = s;
-    return 1;
+    board->selected = (board->selected + 1) % board->moveable_count;
+    return true;
 }
 
 int board_move_selected_backward(struct Board *board)
 {
-    if (!board_can_move_backward(board, board->selected))
+    uint64_t index = board->moveable_pieces[board->selected];
+    if (!board_can_move_backward(board, index))
     {
         return 0;
     }
-    struct Piece *piece = &board->pieces[board->selected];
+    struct Piece *piece = &board->pieces[index];
     piece_move(piece, -1);
+
+    // moving a piece change moveable pieces
+    board_reset_moveable(board);
     return 1;
 }
 
 int board_move_selected_forward(struct Board *board)
 {
-    if (!board_can_move_forward(board, board->selected))
+    uint64_t index = board->moveable_pieces[board->selected];
+    if (!board_can_move_forward(board, index))
     {
         return 0;
     }
-    struct Piece *piece = &board->pieces[board->selected];
+    struct Piece *piece = &board->pieces[index];
     piece_move(piece, 1);
+
+    // moving a piece change moveable pieces
+    board_reset_moveable(board);
     return 1;
 }
 
-int board_is_solved(struct Board *board)
+int board_is_solved(const struct Board *board)
 {
     if (board->piece_count > 0)
     {
         // primary piece is always the first in the list
-        struct Piece *primaryPiece = &board->pieces[0];
+        const struct Piece *primaryPiece = &board->pieces[0];
 
         // calculate exit position
         uint64_t exitPosition = (6 * 6 / 2 - 2);
@@ -153,4 +172,26 @@ int board_is_solved(struct Board *board)
         return primaryPiece->position == exitPosition;
     }
     return false;
+}
+
+int board_select_diff(const struct Board *board, uint64_t index)
+{
+    if (board->selected < 0)
+    {
+        return 0;
+    }
+
+    int i = board->selected;
+    int diff = 0;
+    do
+    {
+        i = (i + 1) % board->moveable_count;
+        diff++;
+    } while (board->moveable_pieces[i] != index && i != board->selected);
+    if (i == board->selected)
+    {
+        // index is not moveable
+        return 0;
+    }
+    return diff;
 }

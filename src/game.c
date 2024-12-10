@@ -150,18 +150,15 @@ uint64_t game_play(struct Game *game, struct Board *board)
 
         if (riv->keys[RIV_GAMEPAD_A1].press ||
             riv->keys[RIV_GAMEPAD_A2].press ||
+            riv->keys[RIV_GAMEPAD_A3].press ||
+            riv->keys[RIV_GAMEPAD_A4].press ||
             riv->keys[RIV_GAMEPAD_L1].press ||
             riv->keys[RIV_GAMEPAD_L2].press ||
             riv->keys[RIV_GAMEPAD_L3].press ||
-            riv->keys[RIV_GAMEPAD_SELECT].press)
-        {
-            board_select_previous(board);
-        }
-        if (riv->keys[RIV_GAMEPAD_A3].press ||
-            riv->keys[RIV_GAMEPAD_A4].press ||
             riv->keys[RIV_GAMEPAD_R1].press ||
             riv->keys[RIV_GAMEPAD_R2].press ||
             riv->keys[RIV_GAMEPAD_R3].press ||
+            riv->keys[RIV_GAMEPAD_SELECT].press ||
             riv->keys[RIV_GAMEPAD_START].press)
         {
             board_select_next(board);
@@ -184,7 +181,12 @@ uint64_t game_play(struct Game *game, struct Board *board)
 
         // draw board
         draw_board(board, 32, 32, 6 * 32, 6 * 32, 0,
-                   RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_WALLS | RUSH_DRAW_EXIT | RUSH_DRAW_DIM_UNMOVEABLE);
+                   RUSH_DRAW_PRIMARY_PIECE |
+                       RUSH_DRAW_PIECES |
+                       RUSH_DRAW_WALLS |
+                       RUSH_DRAW_EXIT |
+                       RUSH_DRAW_DIM_UNMOVEABLE |
+                       RUSH_DRAW_CLICKS);
 
         // draw score
         riv_recti text_size = draw_score(256 - 32, 256 - 16, game->score);
@@ -244,7 +246,7 @@ void game_transition(struct Game *game, struct Board *current, struct Board *nex
         // Draw fixed primary piece
         if (drawPrimary)
         {
-            draw_piece(current_piece, 32, 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_4, true, true);
+            draw_piece(current_piece, 32, 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_4, true, true, 0);
         }
 
         // draw score
@@ -276,7 +278,7 @@ void game_transition(struct Game *game, struct Board *current, struct Board *nex
         // Draw next board
         draw_board(next, 32, 32, 6 * 32, 6 * 32, colorOffset,
                    RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_WALLS | RUSH_DRAW_EXIT);
-        draw_piece(&next->pieces[0], 32, 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_4, true, true);
+        draw_piece(&next->pieces[0], 32, 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_4, true, true, 0);
 
         // draw score
         riv_recti text_size = draw_score(256 - 32, 256 - 16, new_score);
@@ -318,7 +320,7 @@ void game_initial_transition(struct Game *game, struct Board *next)
                    RUSH_DRAW_EXIT | RUSH_DRAW_ENTRY);
 
         // Draw fixed primary piece
-        draw_piece(&next->pieces[0], 32 - (256 - offset), 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_4, true, can_move);
+        draw_piece(&next->pieces[0], 32 - (256 - offset), 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_4, true, can_move, 0);
 
         // present
         seqt_poll();
@@ -334,7 +336,7 @@ void game_initial_transition(struct Game *game, struct Board *next)
         // Draw next board
         draw_board(next, 32, 32, 6 * 32, 6 * 32, colorOffset,
                    RUSH_DRAW_PRIMARY_PIECE | RUSH_DRAW_PIECES | RUSH_DRAW_WALLS | RUSH_DRAW_EXIT);
-        draw_piece(&next->pieces[0], 32, 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_4, true, can_move);
+        draw_piece(&next->pieces[0], 32, 32, 6 * 32, 6 * 32, RUSH_COLOR_RED_4, true, can_move, 0);
 
         // draw score
         draw_score(256 - 32, 256 - 16, 0);
