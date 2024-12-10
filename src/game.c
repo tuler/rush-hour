@@ -196,6 +196,14 @@ uint64_t game_play(struct Game *game, struct Board *board)
                     text_size.height,
                     (float)time_left / max_time);
 
+        // time running out sfx
+        if ((time_left < 2000 && riv->frame % 8 == 0) ||
+            (time_left < 4000 && riv->frame % 16 == 0) ||
+            (time_left < 6000 && riv->frame % 32 == 0))
+        {
+            sfx_time();
+        }
+
         seqt_poll();
     } while (riv_present());
     return 0;
