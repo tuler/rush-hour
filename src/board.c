@@ -50,7 +50,7 @@ struct Board board_create(uint64_t index, const char *desc, uint64_t moves)
     return b;
 }
 
-int board_piece_at(struct Board *board, uint64_t position)
+int board_piece_at(const struct Board *board, uint64_t position)
 {
     for (size_t i = 0; i < board->piece_count; i++)
     {
@@ -73,24 +73,24 @@ const struct Piece *board_primary_piece(struct Board *board)
     return &board->pieces[0];
 }
 
-int board_is_occupied(struct Board *board, uint64_t position)
+int board_is_occupied(const struct Board *board, uint64_t position)
 {
     return board_piece_at(board, position) >= 0;
 }
 
-int board_can_move_forward(struct Board *board, uint64_t index)
+int board_can_move_forward(const struct Board *board, uint64_t index)
 {
     const struct Piece *piece = &board->pieces[index];
     return piece_can_move_forward(piece) && !board_is_occupied(board, piece_end_position(piece) + piece->stride);
 }
 
-int board_can_move_backward(struct Board *board, uint64_t index)
+int board_can_move_backward(const struct Board *board, uint64_t index)
 {
     const struct Piece *piece = &board->pieces[index];
     return piece_can_move_backward(piece) && !board_is_occupied(board, piece->position - piece->stride);
 }
 
-int board_can_move(struct Board *board, uint64_t index)
+int board_can_move(const struct Board *board, uint64_t index)
 {
     return board_can_move_backward(board, index) || board_can_move_forward(board, index);
 }

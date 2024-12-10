@@ -27,6 +27,8 @@ struct Board
 
 struct Board board_create(uint64_t index, const char *desc, uint64_t moves);
 
+int board_can_move(const struct Board *board, uint64_t index);
+
 int board_select_next(struct Board *board);
 
 int board_select_previous(struct Board *board);

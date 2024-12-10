@@ -24,7 +24,7 @@ void draw_health(uint64_t x0, uint64_t y0, uint64_t w, uint64_t h, float percent
     riv_draw_rect_fill(x0 + 1, y0 + 1, fw, h - 2, RUSH_COLOR_PIECE);
 }
 
-void draw_piece(const struct Piece *p, int64_t x0, int64_t y0, int64_t w, int64_t h, uint32_t color, int selected)
+void draw_piece(const struct Piece *p, int64_t x0, int64_t y0, int64_t w, int64_t h, uint32_t color, int selected, int can_move)
 {
     int64_t padding = 2; // padding
     int64_t cw = w / 6;  // cell width
@@ -38,7 +38,8 @@ void draw_piece(const struct Piece *p, int64_t x0, int64_t y0, int64_t w, int64_
     int64_t py1 = (i1 / 6) * ch;
     int64_t pw = px1 - px0 + cw - padding;
     int64_t ph = py1 - py0 + ch - padding;
-    riv_draw_rect_fill(x0 + px0, y0 + py0, pw, ph, selected ? color + 1 : color);
+    uint32_t c = can_move ? (selected ? color + 1 : color) : color - 2;
+    riv_draw_rect_fill(x0 + px0, y0 + py0, pw, ph, c);
 
     if (piece_is_fixed(p))
     {
@@ -88,18 +89,20 @@ void draw_board(const struct Board *b, int64_t x0, int64_t y0, int64_t w, int64_
     // draw pieces
     if (flags & RUSH_DRAW_PRIMARY_PIECE)
     {
-        draw_piece(&b->pieces[0], x0, y0, w, h, RUSH_COLOR_RED_4 + colorOffset, 0 == b->selected);
+        int can_move = flags & RUSH_DRAW_DIM_UNMOVEABLE ? board_can_move(b, 0) : true;
+        draw_piece(&b->pieces[0], x0, y0, w, h, RUSH_COLOR_RED_4 + colorOffset, 0 == b->selected, can_move);
     }
     for (size_t i = 1; i < b->piece_count; i++)
     {
         const struct Piece *p = &b->pieces[i];
         if (piece_is_fixed(p) && (flags & RUSH_DRAW_WALLS))
         {
-            draw_piece(p, x0, y0, w, h, RUSH_COLOR_GREY_4 + colorOffset, i == b->selected);
+            draw_piece(p, x0, y0, w, h, RUSH_COLOR_GREY_4 + colorOffset, i == b->selected, false);
         }
         else if (flags & RUSH_DRAW_PIECES)
         {
-            draw_piece(p, x0, y0, w, h, RUSH_COLOR_TEAL_4 + colorOffset, i == b->selected);
+            int can_move = flags & RUSH_DRAW_DIM_UNMOVEABLE ? board_can_move(b, i) : true;
+            draw_piece(p, x0, y0, w, h, RUSH_COLOR_TEAL_4 + colorOffset, i == b->selected, can_move);
         }
     }
 
